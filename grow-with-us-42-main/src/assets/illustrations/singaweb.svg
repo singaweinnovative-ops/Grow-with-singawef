@@ -1,0 +1,47 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustration of a laptop displaying a school website next to a school building icon">
+  <defs>
+    <linearGradient id="sw-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#EAF5F3" />
+      <stop offset="100%" stop-color="#D3E9E6" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#sw-bg)" />
+  <circle cx="660" cy="120" r="90" fill="#1F6F6B" opacity="0.08" />
+  <circle cx="90" cy="480" r="110" fill="#1F6F6B" opacity="0.08" />
+
+  <!-- school building (left) -->
+  <g transform="translate(90 280)">
+    <rect x="0" y="60" width="180" height="140" fill="#1F6F6B" opacity="0.9" />
+    <path d="M-10 60 L90 -10 L190 60 Z" fill="#164F4C" />
+    <rect x="30" y="100" width="34" height="34" fill="#EAF5F3" />
+    <rect x="78" y="100" width="34" height="34" fill="#EAF5F3" />
+    <rect x="126" y="100" width="34" height="34" fill="#EAF5F3" />
+    <rect x="72" y="150" width="46" height="50" fill="#EAF5F3" />
+    <rect x="80" y="-40" width="8" height="34" fill="#164F4C" />
+    <rect x="88" y="-40" width="22" height="14" fill="#2E9C93" />
+  </g>
+
+  <!-- laptop (right, overlapping) -->
+  <g transform="translate(330 200)">
+    <rect x="0" y="0" width="360" height="230" rx="14" fill="#0F3B39" />
+    <rect x="14" y="14" width="332" height="202" rx="4" fill="#FFFFFF" />
+    <rect x="14" y="14" width="332" height="34" fill="#1F6F6B" />
+    <circle cx="30" cy="31" r="5" fill="#F2C86B" />
+    <circle cx="46" cy="31" r="5" fill="#E4785C" />
+    <circle cx="62" cy="31" r="5" fill="#7FBF8C" />
+    <rect x="30" y="66" width="120" height="16" rx="3" fill="#1F6F6B" opacity="0.85" />
+    <rect x="30" y="92" width="200" height="8" rx="3" fill="#B9D9D6" />
+    <rect x="30" y="108" width="170" height="8" rx="3" fill="#B9D9D6" />
+    <rect x="30" y="132" width="90" height="60" rx="4" fill="#DCEEEC" />
+    <rect x="132" y="132" width="90" height="60" rx="4" fill="#DCEEEC" />
+    <rect x="234" y="132" width="90" height="60" rx="4" fill="#DCEEEC" />
+    <path d="M-30 230 L390 230 L420 280 L-60 280 Z" fill="#0A2E2C" />
+  </g>
+
+  <!-- floating sparks -->
+  <g fill="#2E9C93">
+    <circle cx="230" cy="140" r="6" />
+    <circle cx="700" cy="380" r="8" />
+    <circle cx="620" cy="480" r="5" />
+  </g>
+</svg>
