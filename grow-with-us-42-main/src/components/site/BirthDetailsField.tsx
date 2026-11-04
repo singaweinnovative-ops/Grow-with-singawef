@@ -30,6 +30,11 @@ export function BirthDetailsField({
 
   return (
     <div className="grid gap-3">
+      <input
+        type="hidden"
+        name="dob"
+        value={effectiveDob ? effectiveDob.toISOString().slice(0, 10) : ""}
+      />
       <div className="flex items-center gap-4">
         <span className="eyebrow text-clay">Date of birth</span>
         <div className="flex gap-1 rounded-sm border border-border p-0.5 text-xs">
@@ -82,7 +87,11 @@ export function BirthDetailsField({
               className={`${inputClass} flex w-full items-center justify-between text-left`}
             >
               {dob
-                ? dob.toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" })
+                ? dob.toLocaleDateString("en-ZA", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })
                 : "Select your date of birth"}
               <CalendarIcon className="size-4 text-muted-foreground" />
             </button>

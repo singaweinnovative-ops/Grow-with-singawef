@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Reveal } from "@/components/site/Reveal";
 import { VideoFrame } from "@/components/site/VideoFrame";
+import singaweIntro from "@/assets/singawe-f-intro-720p.mp4";
+import introPoster from "@/assets/singawe-f-intro-poster.jpg";
 import { OpportunityCarousel } from "@/components/site/OpportunityCarousel";
 import { PartnerMarquee } from "@/components/site/PartnerMarquee";
 import {
@@ -13,12 +15,12 @@ import {
   WALK_STAGES,
 } from "@/lib/site-content";
 import { galleryPhoto } from "@/lib/gallery-photos";
+import { getPublishedOpportunities } from "@/lib/site-content-db";
 import heroStudent from "@/assets/hero-student.jpg";
-import mentorship from "@/assets/mentorship.jpg";
 import steam from "@/assets/steam.jpg";
-import community from "@/assets/community.jpg";
 
 export const Route = createFileRoute("/")({
+  loader: () => getPublishedOpportunities(),
   head: () => ({
     meta: [
       { title: "SINGAWE Foundation — We Are For You" },
@@ -39,6 +41,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const opportunities = Route.useLoaderData();
   return (
     <>
       {/* HERO */}
@@ -47,7 +50,7 @@ function Home() {
         <div className="pointer-events-none absolute -bottom-32 left-[-12%] size-[30rem] rounded-full bg-[radial-gradient(circle,var(--gold),transparent_70%)] opacity-25" />
         <div className="mx-auto grid max-w-7xl gap-14 px-6 pt-16 pb-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-end lg:px-10 lg:pt-24 lg:pb-28">
           <div>
-           <p
+            <p
               className="eyebrow text-clay"
               style={{ animation: "sf-rise 0.8s cubic-bezier(0.16,1,0.3,1) both" }}
             >
@@ -97,22 +100,22 @@ function Home() {
             className="relative"
             style={{ animation: "sf-rise 1s 0.15s cubic-bezier(0.16,1,0.3,1) both" }}
           >
-           <img
-                  src={heroStudent}
-                  alt="A young South African student smiling in warm sunlight"
-                  width={1600}
-                  height={1808}
-                  className="relative w-full aspect-[4/5] object-cover"
-                />
-                <div className="absolute -bottom-4 -right-4 bg-[var(--ink)] text-white px-5 py-4 max-w-[220px]">
-                  <div className="eyebrow text-[var(--orange)]">Our Motto</div>
-                  <div className="mt-1 font-serif italic text-xl leading-tight">
-                    Your Journey.
-                    <br />
-                    Our Commitment.
-                  </div>
-                </div>
+            <img
+              src={heroStudent}
+              alt="A young South African student smiling in warm sunlight"
+              width={1600}
+              height={1808}
+              className="relative w-full aspect-[4/5] object-cover"
+            />
+            <div className="absolute -bottom-4 -right-4 bg-[var(--ink)] text-white px-5 py-4 max-w-[220px]">
+              <div className="eyebrow text-[var(--orange)]">Our Motto</div>
+              <div className="mt-1 font-serif italic text-xl leading-tight">
+                Your Journey.
+                <br />
+                Our Commitment.
               </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -124,9 +127,9 @@ function Home() {
               SINGAWE Foundation is an organisation of{" "}
               <span className="text-clay">opportunity</span>,{" "}
               <span className="text-clay">empowerment</span> and{" "}
-              <span className="text-clay">lasting impact</span>. Our work begins with the
-              individual — because investing in one person creates a ripple that strengthens
-              families, schools and communities.
+              <span className="text-clay">lasting impact</span>. Our work begins with the individual
+              — because investing in one person creates a ripple that strengthens families, schools
+              and communities.
             </p>
           </Reveal>
           <Reveal delay={120}>
@@ -144,9 +147,9 @@ function Home() {
               Open right now — apply yourself, or let us walk it with you.
             </h2>
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              Every slide links to the official page. Prefer to apply on your own? Go straight there.
-              Want a hand? Get help applying and a form for exactly that kind of opportunity opens
-              beside you.
+              Every slide links to the official page. Prefer to apply on your own? Go straight
+              there. Want a hand? Get help applying and a form for exactly that kind of opportunity
+              opens beside you.
             </p>
           </div>
           <Link
@@ -157,7 +160,7 @@ function Home() {
           </Link>
         </Reveal>
 
-        <OpportunityCarousel />
+        <OpportunityCarousel opportunities={opportunities} />
       </section>
 
       {/* THE JOURNEY */}
@@ -192,8 +195,8 @@ function Home() {
               Stories from the people we walk with.
             </h2>
             <p className="mt-6 max-w-md leading-relaxed text-muted-foreground">
-              Journeyers, Guides and Companions telling it themselves. Our first films are in
-              production — this space is held for them.
+              Journeyers, Guides and Companions telling it themselves — no script, just the people
+              we walk with.
             </p>
             <Link
               to="/people"
@@ -204,8 +207,10 @@ function Home() {
           </Reveal>
           <Reveal delay={120}>
             <VideoFrame
-              label="Foundation film · in production"
-              caption="Space reserved for the SINGAWE introduction film."
+              label="In Their Words"
+              caption="The SINGAWE Foundation, in the words of the people who walk it."
+              videoSrc={singaweIntro}
+              poster={introPoster}
             />
           </Reveal>
         </div>
@@ -216,46 +221,46 @@ function Home() {
         <img src={steam} alt="" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-background/92 via-background/80 to-background/95" />
         <div className="relative mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
-        <Reveal className="flex flex-wrap items-end justify-between gap-6">
-          <div className="max-w-2xl">
-            <p className="eyebrow text-clay">Programmes</p>
-            <h2 className="mt-4 text-[clamp(2rem,4vw,3.2rem)] leading-[1.05]">
-              Four ways we reduce the distance to opportunity.
-            </h2>
-          </div>
-          <Link
-            to="/programmes"
-            className="slash text-sm font-semibold transition-colors hover:text-clay"
-          >
-            All programmes
-          </Link>
-        </Reveal>
+          <Reveal className="flex flex-wrap items-end justify-between gap-6">
+            <div className="max-w-2xl">
+              <p className="eyebrow text-clay">Programmes</p>
+              <h2 className="mt-4 text-[clamp(2rem,4vw,3.2rem)] leading-[1.05]">
+                Four ways we reduce the distance to opportunity.
+              </h2>
+            </div>
+            <Link
+              to="/programmes"
+              className="slash text-sm font-semibold transition-colors hover:text-clay"
+            >
+              All programmes
+            </Link>
+          </Reveal>
 
-        <div className="mt-16 grid gap-8 md:grid-cols-2">
-          {PROGRAMMES.map((p, i) => (
-            <Reveal key={p.id} delay={i * 90}>
-              <Link
-                to="/programmes"
-                hash={p.id}
-                className="lift flex h-full flex-col rounded-sm border border-border bg-card p-9 transition-colors duration-300 hover:border-gold hover:bg-gold-soft focus-visible:border-gold focus-visible:bg-gold-soft focus-visible:outline-none"
-              >
-                <div className="flex items-baseline justify-between">
-                  <span className="eyebrow text-gold">{p.kicker}</span>
-                  <span className="font-display text-3xl text-border">{p.label}</span>
-                </div>
-                <h3 className="mt-5 font-display text-3xl">{p.name}</h3>
-                <p className="mt-4 leading-relaxed text-muted-foreground">{p.body}</p>
-                <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
-                  {p.points.map((pt) => (
-                    <li key={pt} className="slash">
-                      {pt}
-                    </li>
-                  ))}
-                </ul>
-              </Link>
-            </Reveal>
-          ))}
-        </div>
+          <div className="mt-16 grid gap-8 md:grid-cols-2">
+            {PROGRAMMES.map((p, i) => (
+              <Reveal key={p.id} delay={i * 90}>
+                <Link
+                  to="/programmes"
+                  hash={p.id}
+                  className="lift flex h-full flex-col rounded-sm border border-border bg-card p-9 transition-colors duration-300 hover:border-gold hover:bg-gold-soft focus-visible:border-gold focus-visible:bg-gold-soft focus-visible:outline-none"
+                >
+                  <div className="flex items-baseline justify-between">
+                    <span className="eyebrow text-gold">{p.kicker}</span>
+                    <span className="font-display text-3xl text-border">{p.label}</span>
+                  </div>
+                  <h3 className="mt-5 font-display text-3xl">{p.name}</h3>
+                  <p className="mt-4 leading-relaxed text-muted-foreground">{p.body}</p>
+                  <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
+                    {p.points.map((pt) => (
+                      <li key={pt} className="slash">
+                        {pt}
+                      </li>
+                    ))}
+                  </ul>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -374,8 +379,8 @@ function Home() {
                 same date every month until the road is walked.
               </p>
               <img
-                src={mentorship}
-                alt="A Guide and a Journeyer working through an application together"
+                src={galleryPhoto("mentored4")}
+                alt="A Guide reviewing a Journeyer's presentation before judging"
                 width={1408}
                 height={1008}
                 loading="lazy"
@@ -397,7 +402,6 @@ function Home() {
         </div>
       </section>
 
-
       {/* IMAGE MOSAIC */}
       <section className="border-y border-border bg-ink text-cream">
         <div className="mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
@@ -414,8 +418,20 @@ function Home() {
 
           <div className="mt-16 grid gap-6 md:grid-cols-3">
             {[
-              { src: mentorship, alt: "A mentor and a student reading together at a table", w: 1408, h: 1008, span: "md:col-span-2" },
-              { src: steam, alt: "Three students building a robotics project together", w: 1200, h: 1200, span: "" },
+              {
+                src: galleryPhoto("phuthini2"),
+                alt: "Journeyers and a Guide gathered at Phuthini Secondary School",
+                w: 1600,
+                h: 1259,
+                span: "md:col-span-2",
+              },
+              {
+                src: galleryPhoto("mentored3"),
+                alt: "A Guide with Journeyers at the Eskom Expo for Young Scientists",
+                w: 1280,
+                h: 960,
+                span: "",
+              },
             ].map((img, i) => (
               <Reveal key={img.alt} delay={i * 120} className={img.span}>
                 <img
@@ -430,10 +446,10 @@ function Home() {
             ))}
             <Reveal delay={240} className="md:col-span-3">
               <img
-                src={community}
-                alt="A group of young community members standing together, laughing"
-                width={1808}
-                height={1008}
+                src={galleryPhoto("tacaDut2")}
+                alt="Learners at Durban University of Technology's Student Recruitment Day"
+                width={1200}
+                height={1600}
                 loading="lazy"
                 className="h-72 w-full rounded-sm object-cover md:h-96"
               />

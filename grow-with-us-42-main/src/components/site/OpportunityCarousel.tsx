@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 import {
   Sheet,
   SheetContent,
@@ -10,14 +15,13 @@ import {
 } from "@/components/ui/sheet";
 import { HelpApplyingForm } from "@/components/site/HelpApplyingForm";
 import { OpportunityWindow } from "@/components/site/OpportunityWindow";
-import { OPPORTUNITIES } from "@/lib/site-content";
+import type { SiteOpportunity } from "@/lib/site-content-db";
+import { isOpportunityActive } from "@/lib/opportunity-dates";
 import mentorship from "@/assets/mentorship.jpg";
 import steam from "@/assets/steam.jpg";
 import community from "@/assets/community.jpg";
 import heroPortrait from "@/assets/hero-portrait.jpg";
 import heroStudent from "@/assets/hero-student.jpg";
-
-type Opportunity = (typeof OPPORTUNITIES)[number];
 
 const SLIDE_IMAGES: Record<string, string> = {
   nsfas: mentorship,
@@ -30,10 +34,11 @@ const SLIDE_IMAGES: Record<string, string> = {
 
 const AUTOPLAY_MS = 6000;
 
-export function OpportunityCarousel() {
+export function OpportunityCarousel({ opportunities }: { opportunities: SiteOpportunity[] }) {
+  const activeOpportunities = opportunities.filter((o) => isOpportunityActive(o.opens, o.closes));
   const [api, setApi] = useState<CarouselApi>();
   const [selected, setSelected] = useState(0);
-  const [active, setActive] = useState<Opportunity | null>(null);
+  const [active, setActive] = useState<SiteOpportunity | null>(null);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
@@ -60,6 +65,8 @@ export function OpportunityCarousel() {
     return () => clearInterval(id);
   }, [api, paused]);
 
+  if (activeOpportunities.length === 0) return null;
+
   return (
     <>
       <div
@@ -69,11 +76,11 @@ export function OpportunityCarousel() {
       >
         <Carousel opts={{ align: "start", loop: true }} setApi={setApi}>
           <CarouselContent className="-ml-0">
-            {OPPORTUNITIES.map((o) => (
+            {activeOpportunities.map((o) => (
               <CarouselItem key={o.id} className="basis-full pl-0">
                 <div className="relative h-[28rem] overflow-hidden rounded-sm sm:h-[26rem] md:h-[32rem]">
                   <img
-                    src={SLIDE_IMAGES[o.id]}
+                    src={o.image_url || SLIDE_IMAGES[o.id] || steam}
                     alt=""
                     className="absolute inset-0 h-full w-full object-cover"
                     loading="lazy"
@@ -82,7 +89,12 @@ export function OpportunityCarousel() {
                   <div className="relative z-10 flex h-full flex-col justify-end p-8 md:p-14">
                     <div className="flex items-start justify-between gap-4">
                       <span className="eyebrow text-gold">{o.category}</span>
-                      <OpportunityWindow opens={o.opens} closes={o.closes} tone="dark" align="end" />
+                      <OpportunityWindow
+                        opens={o.opens}
+                        closes={o.closes}
+                        tone="dark"
+                        align="end"
+                      />
                     </div>
                     <h3 className="mt-4 max-w-2xl font-display text-3xl leading-tight text-cream md:text-4xl">
                       {o.title}
@@ -133,7 +145,7 @@ export function OpportunityCarousel() {
         </button>
 
         <div className="absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-2">
-          {OPPORTUNITIES.map((o, i) => (
+          {activeOpportunities.map((o, i) => (
             <button
               key={o.id}
               type="button"

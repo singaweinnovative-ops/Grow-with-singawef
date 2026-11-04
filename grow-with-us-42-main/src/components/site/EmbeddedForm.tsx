@@ -1,13 +1,10 @@
+import { useState, type FormEvent } from "react";
 import { FORMS, SITE } from "@/lib/site-content";
+import { submitFormToSupabase } from "@/lib/forms-client";
 import { cn } from "@/lib/utils";
 
 type FormKey = keyof typeof FORMS;
 
-/**
- * Renders a Google Form directly on the page. Paste the form's embed URL into
- * FORMS in src/lib/site-content.ts and it appears here — responses land in your
- * Google Sheet. Until then a graceful fallback with a direct email is shown.
- */
 export function EmbeddedForm({
   form,
   className,
@@ -19,6 +16,23 @@ export function EmbeddedForm({
 }) {
   const config = FORMS[form];
   const dark = tone === "dark";
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formElement = event.currentTarget;
+    const formData = new FormData(formElement);
+    formData.set("source", config.title);
+    setStatus("sending");
+
+    try {
+      await submitFormToSupabase(form === "newsTip" ? "news_tip" : form, formData);
+      setStatus("sent");
+      formElement.reset();
+    } catch {
+      setStatus("error");
+    }
+  }
 
   return (
     <div
@@ -36,40 +50,68 @@ export function EmbeddedForm({
         </p>
       </div>
 
-      {config.embedUrl ? (
-        <iframe
-          src={config.embedUrl}
-          title={config.title}
-          height={config.height ?? 1000}
-          loading="lazy"
-          className="w-full bg-background"
-          style={{ border: 0 }}
+      <form className="grid gap-5 px-6 py-8" onSubmit={handleSubmit}>
+        <input type="hidden" name="_subject" value={config.title} />
+        <label className="grid gap-2 text-sm">
+          <span className={cn("eyebrow", dark ? "text-gold" : "text-clay")}>Your name</span>
+          <input
+            required
+            name="name"
+            autoComplete="name"
+            className="rounded-sm border border-border bg-background px-4 py-3 text-base text-foreground outline-none transition-colors focus:border-gold"
+          />
+        </label>
+        <label className="grid gap-2 text-sm">
+          <span className={cn("eyebrow", dark ? "text-gold" : "text-clay")}>Email</span>
+          <input
+            required
+            type="email"
+            name="email"
+            autoComplete="email"
+            className="rounded-sm border border-border bg-background px-4 py-3 text-base text-foreground outline-none transition-colors focus:border-gold"
+          />
+        </label>
+        <label className="grid gap-2 text-sm">
+          <span className={cn("eyebrow", dark ? "text-gold" : "text-clay")}>
+            Organisation or role <span className="normal-case text-muted-foreground">(optional)</span>
+          </span>
+          <input
+            name="organisation"
+            autoComplete="organization"
+            className="rounded-sm border border-border bg-background px-4 py-3 text-base text-foreground outline-none transition-colors focus:border-gold"
+          />
+        </label>
+        <label className="grid gap-2 text-sm">
+          <span className={cn("eyebrow", dark ? "text-gold" : "text-clay")}>Message</span>
+          <textarea
+            required
+            name="message"
+            rows={5}
+            className="resize-y rounded-sm border border-border bg-background px-4 py-3 text-base text-foreground outline-none transition-colors focus:border-gold"
+          />
+        </label>
+        <button
+          type="submit"
+          disabled={status === "sending"}
+          className="rounded-sm bg-ink px-6 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-clay disabled:opacity-60"
         >
-          Loading form…
-        </iframe>
-      ) : (
-        <div className="px-6 py-10">
-          <p className={cn("text-sm leading-relaxed", dark ? "text-cream/70" : "text-muted-foreground")}>
-            This form is being finalised. In the meantime, write to us directly — a person reads
-            every message and answers it.
+          {status === "sending" ? "Sending…" : "Send enquiry"}
+        </button>
+        {status === "sent" ? (
+          <p role="status" className="text-sm text-muted-foreground">
+            Thank you. Your message has reached the SINGAWE team.
           </p>
-          <a
-            href={`mailto:${SITE.email}?subject=${encodeURIComponent(config.title)}`}
-            className="slash mt-6 inline-block text-sm font-semibold transition-colors hover:text-clay"
-          >
-            {SITE.email}
-          </a>
-          <p
-            className={cn(
-              "mt-8 border-t pt-5 text-xs leading-relaxed",
-              dark ? "border-cream/15 text-cream/45" : "border-border text-muted-foreground/70",
-            )}
-          >
-            Admin note: paste the Google Form embed link into FORMS.{form}.embedUrl and this section
-            becomes a live, fillable form on the site.
+        ) : null}
+        {status === "error" ? (
+          <p role="alert" className="text-sm text-destructive">
+            Something went wrong. Please email{" "}
+            <a href={`mailto:${SITE.email}`} className="underline">
+              {SITE.email}
+            </a>
+            .
           </p>
-        </div>
-      )}
+        ) : null}
+      </form>
     </div>
   );
 }

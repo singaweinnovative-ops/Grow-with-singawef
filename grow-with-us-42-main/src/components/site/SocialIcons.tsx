@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import { SOCIAL } from "@/lib/site-content";
 
 type IconProps = { className?: string };
@@ -84,7 +85,7 @@ function TikTokIcon({ className }: IconProps) {
   );
 }
 
-const LINKS: { key: keyof typeof SOCIAL; label: string; Icon: (p: IconProps) => JSX.Element }[] = [
+const LINKS: { key: keyof typeof SOCIAL; label: string; Icon: (p: IconProps) => ReactElement }[] = [
   { key: "instagram", label: "Instagram", Icon: InstagramIcon },
   { key: "facebook", label: "Facebook", Icon: FacebookIcon },
   { key: "linkedin", label: "LinkedIn", Icon: LinkedInIcon },

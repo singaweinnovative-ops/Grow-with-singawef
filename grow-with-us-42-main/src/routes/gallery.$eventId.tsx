@@ -79,21 +79,24 @@ function EventDetail() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-6 py-16 lg:px-10 lg:py-20">
-        <Reveal>
-          <p className="eyebrow text-clay">Highlights</p>
-          <h2 className="mt-3 font-display text-2xl leading-tight">The film from this event.</h2>
-        </Reveal>
-        <Reveal delay={100} className="mt-8">
-          <GalleryFilm
-            slides={slides}
-            label={`${event.title} · highlights`}
-            videoSrc={event.hasVideo ? TACA_FILM_VIDEO : undefined}
-          />
-        </Reveal>
-      </section>
+      {slides.length > 0 || event.hasVideo ? (
+        <section className="mx-auto max-w-5xl px-6 py-16 lg:px-10 lg:py-20">
+          <Reveal>
+            <p className="eyebrow text-clay">Highlights</p>
+            <h2 className="mt-3 font-display text-2xl leading-tight">The film from this event.</h2>
+          </Reveal>
+          <Reveal delay={100} className="mt-8">
+            <GalleryFilm
+              slides={slides}
+              label={`${event.title} · highlights`}
+              {...(event.hasVideo ? { videoSrc: TACA_FILM_VIDEO } : {})}
+            />
+          </Reveal>
+        </section>
+      ) : null}
 
-      <section className="border-t border-border bg-sand">
+      {event.photos.length > 0 ? (
+        <section className="border-t border-border bg-sand">
         <div className="mx-auto max-w-7xl px-6 py-16 lg:px-10 lg:py-20">
           <Reveal>
             <p className="eyebrow text-clay">Every photo</p>
@@ -124,7 +127,8 @@ function EventDetail() {
             ))}
           </div>
         </div>
-      </section>
+        </section>
+      ) : null}
 
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-10 lg:py-20">
         <Reveal>
@@ -138,14 +142,18 @@ function EventDetail() {
                 params={{ eventId: o.id }}
                 className="lift flex h-full flex-col overflow-hidden rounded-sm border border-border bg-card"
               >
-                <img
-                  src={galleryPhoto(o.photos[0].src)}
-                  alt={o.title}
-                  width={1200}
-                  height={900}
-                  loading="lazy"
-                  className="h-40 w-full object-cover"
-                />
+                {o.photos[0] ? (
+                  <img
+                    src={galleryPhoto(o.photos[0].src)}
+                    alt={o.title}
+                    width={1200}
+                    height={900}
+                    loading="lazy"
+                    className="h-40 w-full object-cover"
+                  />
+                ) : (
+                  <div aria-hidden="true" className="h-40 w-full bg-sand" />
+                )}
                 <div className="p-5">
                   <span className="eyebrow text-gold">{o.theme}</span>
                   <h3 className="mt-2 font-display text-lg leading-tight">{o.title}</h3>

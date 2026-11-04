@@ -45,9 +45,9 @@ function JourneyerPage() {
             Tell us where you are, and what's in the way.
           </h2>
           <p className="mt-4 leading-relaxed text-muted-foreground">
-            We ask for your date of birth (or ID number, which reads it for you) so we can match
-            you correctly and, if you're under 18, involve a parent or guardian from the start —
-            as our safeguarding framework requires.
+            We ask for your date of birth (or ID number, which reads it for you) so we can match you
+            correctly and, if you're under 18, involve a parent or guardian from the start — as our
+            safeguarding framework requires.
           </p>
         </Reveal>
         <Reveal delay={100} className="mt-10">
@@ -55,6 +55,7 @@ function JourneyerPage() {
             title="Journeyer interest form"
             blurb="No cost, ever. This starts a conversation, not a commitment."
             submitLabel="Submit my details"
+            formType="intake_journeyer"
           />
         </Reveal>
       </section>

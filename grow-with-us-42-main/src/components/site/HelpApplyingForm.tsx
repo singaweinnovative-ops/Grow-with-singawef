@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { OPPORTUNITY_HELP_FORMS, OPPORTUNITIES, SITE } from "@/lib/site-content";
+import { useState, type FormEvent } from "react";
+import { OPPORTUNITY_HELP_FORMS, SITE } from "@/lib/site-content";
+import { submitFormToSupabase } from "@/lib/forms-client";
+import type { SiteOpportunity } from "@/lib/site-content-db";
 
-type Opportunity = (typeof OPPORTUNITIES)[number];
+type Opportunity = SiteOpportunity;
 
 const inputClass =
   "rounded-sm border border-border bg-background px-4 py-3 text-sm outline-none transition-colors focus:border-gold";
@@ -9,7 +11,13 @@ const inputClass =
 const CATEGORY_FIELD: Record<string, { label: string; options: string[] }> = {
   Funding: {
     label: "Which bursary or scheme?",
-    options: ["NSFAS", "Funza Lushaka", "An institution-specific bursary", "Another bursary or scholarship", "Not sure yet"],
+    options: [
+      "NSFAS",
+      "Funza Lushaka",
+      "An institution-specific bursary",
+      "Another bursary or scholarship",
+      "Not sure yet",
+    ],
   },
   Study: {
     label: "Which kind of application?",
@@ -26,7 +34,11 @@ const CATEGORY_FIELD: Record<string, { label: string; options: string[] }> = {
   },
   Competition: {
     label: "Which competition?",
-    options: ["Eskom Expo for Young Scientists", "Another STEM or innovation competition", "Not sure yet"],
+    options: [
+      "Eskom Expo for Young Scientists",
+      "Another STEM or innovation competition",
+      "Not sure yet",
+    ],
   },
 };
 
@@ -41,20 +53,33 @@ const HELP_OPTIONS = [
 ];
 
 export function HelpApplyingForm({ opportunity }: { opportunity: Opportunity }) {
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [helpWith, setHelpWith] = useState<string[]>([]);
   const config =
     OPPORTUNITY_HELP_FORMS[opportunity.category as keyof typeof OPPORTUNITY_HELP_FORMS];
-  const categoryField = CATEGORY_FIELD[opportunity.category] ?? CATEGORY_FIELD.Study;
+  const categoryField = CATEGORY_FIELD[opportunity.category] ?? CATEGORY_FIELD["Study"]!;
 
-  if (sent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("sending");
+    const formData = new FormData(e.currentTarget);
+    formData.set("form_type", "help_applying");
+    formData.set("opportunity", opportunity.title);
+    try {
+      await submitFormToSupabase("help_applying", formData);
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  if (status === "sent") {
     return (
       <div className="rounded-sm border border-gold/40 bg-gold-soft/40 p-6">
         <p className="font-display text-lg">Thank you — we have your details.</p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          This form is not yet wired to our intake system, so nothing was sent just now. In the
-          meantime, write to us directly and mention "{opportunity.title}" — a person reads and
-          answers every message.
+          A person reads and answers every message — if it's urgent, write to us directly and
+          mention "{opportunity.title}".
         </p>
         <a
           href={`mailto:${SITE.email}?subject=${encodeURIComponent(`Help applying: ${opportunity.title}`)}`}
@@ -75,16 +100,11 @@ export function HelpApplyingForm({ opportunity }: { opportunity: Opportunity }) 
   return (
     <form
       className="grid gap-4 rounded-sm border border-gold/40 bg-gold-soft/40 p-6"
-      onSubmit={(e) => {
-        e.preventDefault();
-        setSent(true);
-      }}
+      onSubmit={handleSubmit}
     >
-      {config?.embedUrl ? null : (
-        <p className="text-xs leading-relaxed text-muted-foreground">
-          {config?.blurb ?? "Tell us where you are and what is in the way. No cost, ever."}
-        </p>
-      )}
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        {config?.blurb ?? "Tell us where you are and what is in the way. No cost, ever."}
+      </p>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="grid gap-1.5 text-sm">
@@ -148,10 +168,23 @@ export function HelpApplyingForm({ opportunity }: { opportunity: Opportunity }) 
 
       <button
         type="submit"
-        className="mt-2 rounded-sm bg-ink px-5 py-3 text-sm font-semibold text-cream transition-colors hover:bg-clay"
+        disabled={status === "sending"}
+        className="mt-2 rounded-sm bg-ink px-5 py-3 text-sm font-semibold text-cream transition-colors hover:bg-clay disabled:opacity-60"
       >
-        Send this to SINGAWE
+        {status === "sending" ? "Sending…" : "Send this to SINGAWE"}
       </button>
+      {status === "error" && (
+        <p className="text-sm text-destructive">
+          Something went wrong. Please email us directly at{" "}
+          <a
+            href={`mailto:${SITE.email}?subject=${encodeURIComponent(`Help applying: ${opportunity.title}`)}`}
+            className="slash"
+          >
+            {SITE.email}
+          </a>
+          .
+        </p>
+      )}
     </form>
   );
 }

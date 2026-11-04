@@ -1,20 +1,34 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { SITE } from "@/lib/site-content";
+import { submitFormToSupabase } from "@/lib/forms-client";
 
 const inputClass =
   "rounded-sm border border-border bg-background px-4 py-3 text-sm outline-none transition-colors focus:border-gold";
 
 export function ReportConcernForm() {
   const [anonymous, setAnonymous] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
-  if (sent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("sending");
+    const formData = new FormData(e.currentTarget);
+    formData.set("form_type", "report_concern");
+    try {
+      await submitFormToSupabase("report_concern", formData);
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  if (status === "sent") {
     return (
       <div className="rounded-sm border border-border bg-clay/10 p-6">
         <p className="font-display text-lg">Thank you — this has been received.</p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          This form is not yet wired to our intake system, so please also write to us directly so a
-          person can act on it immediately.
+          A Steward will read this in confidence. If it is urgent, please also write to us directly
+          so a person can act on it immediately.
         </p>
         <a
           href={`mailto:${SITE.email}?subject=${encodeURIComponent("Safeguarding concern")}`}
@@ -29,10 +43,7 @@ export function ReportConcernForm() {
   return (
     <form
       className="grid gap-4 rounded-sm border border-gold/40 bg-gold-soft/40 p-6"
-      onSubmit={(e) => {
-        e.preventDefault();
-        setSent(true);
-      }}
+      onSubmit={handleSubmit}
     >
       <p className="text-xs leading-relaxed text-muted-foreground">
         Every concern is read by a Steward, in confidence. You will never be asked to justify
@@ -42,6 +53,7 @@ export function ReportConcernForm() {
       <label className="flex items-center gap-2.5 text-sm">
         <input
           type="checkbox"
+          name="anonymous"
           checked={anonymous}
           onChange={(e) => setAnonymous(e.target.checked)}
           className="size-4 shrink-0 accent-[var(--gold)]"
@@ -89,10 +101,23 @@ export function ReportConcernForm() {
 
       <button
         type="submit"
-        className="mt-2 rounded-sm bg-ink px-5 py-3 text-sm font-semibold text-cream transition-colors hover:bg-clay"
+        disabled={status === "sending"}
+        className="mt-2 rounded-sm bg-ink px-5 py-3 text-sm font-semibold text-cream transition-colors hover:bg-clay disabled:opacity-60"
       >
-        Submit report
+        {status === "sending" ? "Sending…" : "Submit report"}
       </button>
+      {status === "error" && (
+        <p className="text-sm text-destructive">
+          Something went wrong. Please email us directly at{" "}
+          <a
+            href={`mailto:${SITE.email}?subject=${encodeURIComponent("Safeguarding concern")}`}
+            className="slash"
+          >
+            {SITE.email}
+          </a>
+          .
+        </p>
+      )}
     </form>
   );
 }

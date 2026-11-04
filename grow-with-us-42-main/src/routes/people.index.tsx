@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Reveal } from "@/components/site/Reveal";
-import { VideoFrame } from "@/components/site/VideoFrame";
 import { PageHero } from "@/components/site/PageHero";
 import {
   Select,
@@ -10,14 +9,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LEXICON, PEOPLE, PERSON_CIRCLES, PEOPLE_YEARS } from "@/lib/site-content";
-import { personPhoto } from "@/lib/people-photos";
+import { LEXICON, PERSON_CIRCLES } from "@/lib/site-content";
+import { PersonAvatar } from "@/components/site/PersonAvatar";
+import { getPublishedPeople } from "@/lib/site-content-db";
 import community from "@/assets/community.jpg";
 
 export const Route = createFileRoute("/people/")({
+  loader: () => getPublishedPeople(),
   head: () => ({
     meta: [
-      { title: "Our People — Guides, Journeyers, Torchbearers & Champions" },
+      { title: "Our People — Guides, Journeyers, Torchbearers & Companions" },
       {
         name: "description",
         content:
@@ -38,12 +39,15 @@ export const Route = createFileRoute("/people/")({
 const CHIP = "rounded-sm border px-3 py-1.5 text-xs transition-colors";
 
 function People() {
+  const people = Route.useLoaderData();
   const [role, setRole] = useState<string>("All");
   const [year, setYear] = useState<string>("All");
+  const years = Array.from(
+    new Set(people.flatMap((person) => (person.year === null ? [] : [person.year]))),
+  ).sort((a, b) => a - b);
 
-  const shown = PEOPLE.filter(
-    (p) =>
-      (role === "All" || p.circle === role) && (year === "All" || String(p.year) === year),
+  const shown = people.filter(
+    (p) => (role === "All" || p.circle === role) && (year === "All" || String(p.year) === year),
   );
 
   return (
@@ -55,9 +59,7 @@ function People() {
             Every face in the walk.
           </h1>
           <div className="mt-6 h-px w-28 rule-draw bg-gold" />
-          <p className="mt-6 max-w-xl leading-relaxed text-cream/80">
-            Filter by role or by year.
-          </p>
+          <p className="mt-6 max-w-xl leading-relaxed text-cream/80">Filter by role or by year.</p>
         </Reveal>
 
         <Reveal delay={80} className="mt-8 space-y-4">
@@ -85,7 +87,7 @@ function People() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {["All", ...PEOPLE_YEARS.map(String)].map((y) => (
+                {["All", ...years.map(String)].map((y) => (
                   <SelectItem key={y} value={y}>
                     {y}
                   </SelectItem>
@@ -106,20 +108,20 @@ function People() {
                 className="lift group block overflow-hidden rounded-sm border border-border bg-card"
               >
                 <div className="relative overflow-hidden">
-                  <img
-                    src={personPhoto(p.photo)}
-                    alt={`${p.name}, ${p.circle}`}
-                    width={800}
-                    height={1000}
-                    loading="lazy"
-                    className="aspect-[4/5] w-full object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+                  <PersonAvatar
+                    photo={p.photo}
+                    initials={p.initials}
+                    name={`${p.name}, ${p.circle}`}
+                    className="aspect-[4/5] transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
                   />
                   <span className="absolute left-3 top-3 rounded-sm bg-background/90 px-2 py-1 text-[0.65rem] font-semibold uppercase tracking-wider text-clay">
                     {p.circle}
                   </span>
-                  <span className="absolute right-3 top-3 rounded-sm bg-ink/80 px-2 py-1 text-[0.65rem] font-semibold text-cream">
-                    {p.year}
-                  </span>
+                  {p.year !== null ? (
+                    <span className="absolute right-3 top-3 rounded-sm bg-ink/80 px-2 py-1 text-[0.65rem] font-semibold text-cream">
+                      {p.year}
+                    </span>
+                  ) : null}
                 </div>
                 <div className="p-4">
                   <h2 className="font-display text-lg leading-tight">{p.name}</h2>
@@ -157,17 +159,6 @@ function People() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-6 py-20 lg:px-10">
-        <Reveal className="text-center">
-          <p className="eyebrow text-clay">In their words</p>
-          <h2 className="mt-3 text-[clamp(1.5rem,3vw,2.2rem)] leading-[1.1]">
-            Their stories belong to them.
-          </h2>
-        </Reveal>
-        <Reveal delay={100} className="mt-10">
-          <VideoFrame label="Journeyer films · space reserved" />
-        </Reveal>
-      </section>
     </>
   );
 }

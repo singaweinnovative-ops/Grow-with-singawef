@@ -3,10 +3,12 @@ import { useState } from "react";
 import { Reveal } from "@/components/site/Reveal";
 import { PageHero } from "@/components/site/PageHero";
 import { OpportunityWindow } from "@/components/site/OpportunityWindow";
-import { OPPORTUNITIES } from "@/lib/site-content";
+import { getPublishedOpportunities } from "@/lib/site-content-db";
+import { isOpportunityActive } from "@/lib/opportunity-dates";
 import steam from "@/assets/steam.jpg";
 
 export const Route = createFileRoute("/opportunities")({
+  loader: () => getPublishedOpportunities(),
   head: () => ({
     meta: [
       { title: "Opportunities — Bursaries, Study, Work & Competitions" },
@@ -28,9 +30,12 @@ export const Route = createFileRoute("/opportunities")({
 });
 
 function Opportunities() {
-  const cats = ["All", ...Array.from(new Set(OPPORTUNITIES.map((o) => o.category)))];
+  const opportunities = Route.useLoaderData();
+  const openOpportunities = opportunities.filter((o) => isOpportunityActive(o.opens, o.closes));
+  const cats = ["All", ...Array.from(new Set(openOpportunities.map((o) => o.category)))];
   const [active, setActive] = useState("All");
-  const shown = active === "All" ? OPPORTUNITIES : OPPORTUNITIES.filter((o) => o.category === active);
+  const shown =
+    active === "All" ? openOpportunities : openOpportunities.filter((o) => o.category === active);
 
   return (
     <>
@@ -89,8 +94,16 @@ function Opportunities() {
             </Reveal>
           ))}
         </div>
+        {shown.length === 0 ? (
+          <p className="py-16 text-center text-sm text-muted-foreground">
+            No open opportunities in this category right now — check back soon.
+          </p>
+        ) : null}
 
-        <Reveal delay={120} className="mt-14 rounded-sm border border-border bg-sand p-10 text-center">
+        <Reveal
+          delay={120}
+          className="mt-14 rounded-sm border border-border bg-sand p-10 text-center"
+        >
           <h2 className="font-display text-[clamp(1.6rem,3vw,2.4rem)] leading-tight">
             Do not apply alone.
           </h2>

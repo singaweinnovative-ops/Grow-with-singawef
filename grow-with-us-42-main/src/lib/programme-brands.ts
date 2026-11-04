@@ -38,6 +38,7 @@ export const PROGRAMME_BRANDS: Record<string, ProgrammeBrand> = {
     sections: [
       { id: "overview", label: "Overview" },
       { id: "includes", label: "What we build" },
+      { id: "schools", label: "Schools" },
       { id: "walk", label: "Build process" },
       { id: "join", label: "Request a site" },
     ],
@@ -70,21 +71,21 @@ export const PROGRAMME_BRANDS: Record<string, ProgrammeBrand> = {
     tint: "#E8EEF7",
     onAccent: "#F5F9FF",
     short: "TACA",
-    tagline: "Until submit is pressed.",
+    tagline: "Career pathways for a changing world.",
     sections: [
       { id: "overview", label: "Overview" },
       { id: "includes", label: "Support offered" },
-      { id: "walk", label: "Application walk" },
-      { id: "join", label: "Get help" },
+      { id: "walk", label: "The journey" },
+      { id: "join", label: "Get guidance" },
     ],
-    cta: { label: "Get application help", hash: "journeyer" },
+    cta: { label: "Get career guidance", hash: "journeyer" },
     joinField: {
-      label: "What do you need help with?",
+      label: "What would you like guidance with?",
       options: [
-        "University application",
-        "TVET/college application",
-        "NSFAS or funding application",
-        "Digital literacy basics",
+        "Career and technology fields",
+        "Study options and entry requirements",
+        "Applications or funding pathways",
+        "Career talks or technology exposure",
       ],
     },
   },
@@ -133,11 +134,19 @@ const EXTRA_SECTIONS = [
   { id: "allies", label: "Partners" },
 ];
 
-export function getBrand(slug: string, name?: string): ProgrammeBrand {
+export function getBrand(
+  slug: string,
+  name?: string,
+  family?: "Programme" | "Initiative",
+): ProgrammeBrand {
   const base = PROGRAMME_BRANDS[slug] ?? { ...DEFAULT_BRAND, short: name ?? DEFAULT_BRAND.short };
   const sections = [...base.sections];
+  const extra =
+    family === "Initiative"
+      ? [...EXTRA_SECTIONS, { id: "gallery", label: "Gallery" }]
+      : EXTRA_SECTIONS;
   const joinIndex = sections.findIndex((s) => s.id === "join");
   const at = joinIndex === -1 ? sections.length : joinIndex;
-  sections.splice(at, 0, ...EXTRA_SECTIONS);
+  sections.splice(at, 0, ...extra);
   return { ...base, sections };
 }

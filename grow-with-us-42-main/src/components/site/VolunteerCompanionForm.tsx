@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { SITE } from "@/lib/site-content";
+import { submitFormToSupabase } from "@/lib/forms-client";
 
 const inputClass =
   "rounded-sm border border-border bg-background px-4 py-3 text-base outline-none transition-colors focus:border-gold";
@@ -16,7 +17,7 @@ const HELP_OPTIONS = [
 export function VolunteerCompanionForm() {
   const [as, setAs] = useState<"individual" | "organisation">("individual");
   const [helpWith, setHelpWith] = useState<string[]>([]);
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   const toggleHelp = (option: string) => {
     setHelpWith((prev) =>
@@ -24,18 +25,29 @@ export function VolunteerCompanionForm() {
     );
   };
 
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("sending");
+    const formData = new FormData(e.currentTarget);
+    formData.set("form_type", "volunteer_companion");
+    formData.set("as", as);
+    try {
+      await submitFormToSupabase("volunteer_companion", formData);
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+    }
+  }
+
   return (
     <form
       className="rounded-sm border border-gold/40 bg-gold-soft/40 p-8 md:p-10"
-      onSubmit={(e) => {
-        e.preventDefault();
-        setSent(true);
-      }}
+      onSubmit={handleSubmit}
     >
       <h3 className="font-display text-2xl">Volunteer &amp; Companion form</h3>
       <p className="mt-2 text-sm text-muted-foreground">
-        Whether you are one person with an afternoon to give, or an organisation with more to
-        offer — tell us how you would like to help.
+        Whether you are one person with an afternoon to give, or an organisation with more to offer
+        — tell us how you would like to help.
       </p>
 
       <div className="mt-8 grid gap-5">
@@ -109,18 +121,25 @@ export function VolunteerCompanionForm() {
 
       <button
         type="submit"
-        className="mt-8 w-full rounded-sm bg-ink px-6 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-clay"
+        disabled={status === "sending"}
+        className="mt-8 w-full rounded-sm bg-ink px-6 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-clay disabled:opacity-60"
       >
-        {sent ? "Thank you — we have your details" : "Send it to the Foundation"}
+        {status === "sending"
+          ? "Sending…"
+          : status === "sent"
+            ? "Thank you — we have your details"
+            : "Send it to the Foundation"}
       </button>
-      {sent && (
-        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-          This form is not yet wired to our intake system. In the meantime, please email us
-          directly at{" "}
-          <a href={`mailto:${SITE.email}?subject=${encodeURIComponent("Volunteer / Companion enquiry")}`} className="slash">
+      {status === "error" && (
+        <p className="mt-4 text-sm leading-relaxed text-destructive">
+          Something went wrong. Please email us directly at{" "}
+          <a
+            href={`mailto:${SITE.email}?subject=${encodeURIComponent("Volunteer / Companion enquiry")}`}
+            className="slash"
+          >
             {SITE.email}
-          </a>{" "}
-          — a person reads and answers every message.
+          </a>
+          .
         </p>
       )}
     </form>

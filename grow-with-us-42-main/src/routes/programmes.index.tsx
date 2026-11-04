@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Reveal } from "@/components/site/Reveal";
-import { VideoFrame } from "@/components/site/VideoFrame";
 import { PageHero } from "@/components/site/PageHero";
 import { INITIATIVES, JOURNEY_STEPS, PROGRAMMES } from "@/lib/site-content";
 import { galleryPhoto } from "@/lib/gallery-photos";
+import { getInitiativeLogo } from "@/lib/initiative-logos";
 import steam from "@/assets/steam.jpg";
 import mentorship from "@/assets/mentorship.jpg";
 
@@ -105,12 +105,23 @@ function Programmes() {
                   className="group grid scroll-mt-24 gap-8 p-8 transition-colors duration-500 hover:bg-gold-soft/40 lg:grid-cols-[0.42fr_1fr] lg:p-12"
                 >
                   <div>
-                    <img
-                      src={galleryPhoto(it.image)}
-                      alt={it.name}
-                      loading="lazy"
-                      className="h-32 w-full rounded-sm object-cover"
-                    />
+                    {getInitiativeLogo(it.id) ? (
+                      <div className="flex h-32 w-full items-center justify-center rounded-sm border border-border bg-white p-6">
+                        <img
+                          src={getInitiativeLogo(it.id)}
+                          alt={`${it.name} logo`}
+                          loading="lazy"
+                          className="h-full w-full object-contain"
+                        />
+                      </div>
+                    ) : (
+                      <img
+                        src={galleryPhoto(it.image)}
+                        alt={it.name}
+                        loading="lazy"
+                        className="h-32 w-full rounded-sm object-cover"
+                      />
+                    )}
                     <span className="mt-5 block font-display text-xs tracking-[0.3em] text-gold">
                       {String(i + 1).padStart(2, "0")}
                     </span>
@@ -141,12 +152,6 @@ function Programmes() {
             ))}
           </div>
 
-          <Reveal delay={120} className="mt-12">
-            <VideoFrame
-              label="Initiative films · space reserved"
-              caption="Short films from SINGAWEB handovers, Sisterhood circles and COMHACK sprints."
-            />
-          </Reveal>
         </div>
       </section>
 
@@ -183,14 +188,6 @@ function Programmes() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-4xl px-6 py-24 lg:px-10">
-        <Reveal>
-          <VideoFrame
-            label="Programme walkthrough · space reserved"
-            caption="A short film showing a Walk-Along session from start to finish."
-          />
-        </Reveal>
-      </section>
     </>
   );
 }

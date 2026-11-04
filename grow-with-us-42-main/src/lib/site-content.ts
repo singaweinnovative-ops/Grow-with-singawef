@@ -3,9 +3,14 @@ export const SITE = {
   legal: "SINGAWE Foundation NPC",
   meaning: "We Are For You.",
   tagline: "Your Journey. Our Commitment.",
-  email: "hello@singawefoundation.org",
+  email: "singawefoundation@gmail.com",
   phone: "+27 60 303 1263",
   location: "Durban, South Africa",
+  registration: {
+    cipcNumber: "2026/566758/08",
+    taxRefNumber: "9817822191",
+    registeredAddressLines: ["70 Steve Biko Rd", "Durban", "Durban", "KwaZulu-Natal", "4001"],
+  },
 };
 
 /**
@@ -301,7 +306,11 @@ export const INITIATIVES = [
     name: "SINGAWEB",
     kicker: "Digital Presence for Schools",
     body: "We design, build and hand over free websites for schools that have never had one — so that every learner, parent and partner can find them, and so that opportunity notices them too.",
-    points: ["Free school websites", "Training for staff to maintain them", "Hosting and handover support"],
+    points: [
+      "Free school websites",
+      "Training for staff to maintain them",
+      "Hosting and handover support",
+    ],
     image: "steam",
   },
   {
@@ -319,14 +328,14 @@ export const INITIATIVES = [
   {
     id: "taca",
     name: "TACA",
-    kicker: "Technology Awareness & Applications",
-    body: "Technology Awareness & Capability Access. Digital literacy and online safety where the tools exist but the confidence does not — and, just as importantly, sitting beside people while they apply to universities, TVET colleges and funding schemes until submit is pressed.",
+    kicker: "Technology Awareness & Career Advisory",
+    body: "TACA helps people understand the changing world of technology and careers, discover their options and navigate pathways toward their aspirations. Through school visits and partner-led sessions, learners explore emerging fields, education routes and practical next steps.",
     points: [
-      "University, college and NSFAS application support",
-      "Digital literacy, online safety and data awareness",
-      "Documents, device and connectivity guidance",
+      "Explore technology, STEAM, entrepreneurship and future-work fields",
+      "Understand qualifications, skills, institutions and alternative pathways",
+      "Connect with students, professionals and partners, then take a clear next step",
     ],
-    image: "taca3",
+    image: "tacaDut2",
   },
 
   {
@@ -334,16 +343,24 @@ export const INITIATIVES = [
     name: "COMHACK",
     kicker: "Finding Opportunities",
     body: "A community hack on the opportunity gap. We surface scholarships, bursaries, competitions and fellowships, then run sprints where people apply together instead of alone.",
-    points: ["Live opportunity board", "Group application sprints", "Deadline alerts and document help"],
-    image: "hack1",
+    points: [
+      "Live opportunity board",
+      "Group application sprints",
+      "Deadline alerts and document help",
+    ],
+    image: "comhack3",
   },
   {
     id: "mentored",
     name: "MENTORED",
     kicker: "Mentorship",
     body: "Our mentorship engine. Every Journeyer matched with a Guide, every relationship structured, safeguarded and recorded — consistency is the product.",
-    points: ["Guide–Journeyer matching", "Structured monthly sessions", "Safeguarding-first framework"],
-    image: "mentorship",
+    points: [
+      "Guide–Journeyer matching",
+      "Structured monthly sessions",
+      "Safeguarding-first framework",
+    ],
+    image: "mentored3",
   },
 ];
 
@@ -408,12 +425,36 @@ export const PROCESS_STEPS = [
 ];
 
 export const WALK_STAGES = [
-  { time: "Month 00", title: "The first conversation", body: "No forms first. A conversation about where you are, what you want, and what is actually in the way." },
-  { time: "Month 01", title: "Matched with a Guide", body: "You are introduced to someone in your field who has agreed to stay for the whole cycle." },
-  { time: "Monthly", title: "The session", body: "One structured hour. Progress, obstacles, next steps — written down, followed up, never dropped." },
-  { time: "Ongoing", title: "The barriers", body: "Transport, data, documents, application fees, confidence. We name them and reduce them one by one." },
-  { time: "The door", title: "The opportunity", body: "You apply prepared, not hopeful. And whatever the outcome, the relationship continues." },
-  { time: "After", title: "You become the Guide", body: "Journeyers become Torchbearers. The walk continues, in the other direction." },
+  {
+    time: "Month 00",
+    title: "The first conversation",
+    body: "No forms first. A conversation about where you are, what you want, and what is actually in the way.",
+  },
+  {
+    time: "Month 01",
+    title: "Matched with a Guide",
+    body: "You are introduced to someone in your field who has agreed to stay for the whole cycle.",
+  },
+  {
+    time: "Monthly",
+    title: "The session",
+    body: "One structured hour. Progress, obstacles, next steps — written down, followed up, never dropped.",
+  },
+  {
+    time: "Ongoing",
+    title: "The barriers",
+    body: "Transport, data, documents, application fees, confidence. We name them and reduce them one by one.",
+  },
+  {
+    time: "The door",
+    title: "The opportunity",
+    body: "You apply prepared, not hopeful. And whatever the outcome, the relationship continues.",
+  },
+  {
+    time: "After",
+    title: "You become the Guide",
+    body: "Journeyers become Torchbearers. The walk continues, in the other direction.",
+  },
 ];
 
 /**
@@ -440,7 +481,7 @@ export const MOVEMENTS = [
     place: "Loskop, KwaZulu-Natal",
     body: "The school where SINGAWE began in 2024. Their teachers opened the door, their learners kept it open. Everything we know about walking with someone, we learned here first.",
     role: "We support, we do not run it.",
-    url: null as string | null,
+    url: "https://phuthini-secondary-school-main.vercel.app/" as string | null,
   },
   {
     id: "dut",
@@ -479,15 +520,115 @@ export const COLLAB_CREED = [
 ];
 
 export const PARTNERS = [
-  { name: "Durban University of Technology", short: "DUT", url: "https://www.dut.ac.za", note: "Anchor supporter" },
-  { name: "Phuthini Secondary School", short: "PSS", url: "https://www.education.gov.za", note: "Anchor school" },
-  { name: "Department of Basic Education", short: "DBE", url: "https://www.education.gov.za", note: "Schools access" },
+  {
+    name: "Durban University of Technology",
+    short: "DUT",
+    url: "https://www.dut.ac.za",
+    note: "Anchor supporter",
+  },
+  {
+    name: "Phuthini Secondary School",
+    short: "PSS",
+    url: "https://phuthini-secondary-school-main.vercel.app/",
+    note: "Anchor school",
+  },
+  {
+    name: "Department of Basic Education",
+    short: "DBE",
+    url: "https://www.education.gov.za",
+    note: "Schools access",
+  },
   { name: "NSFAS", short: "NSFAS", url: "https://www.nsfas.org.za", note: "Funding pathways" },
   { name: "SAYouth", short: "SAY", url: "https://www.sayouth.mobi", note: "Work opportunities" },
-  { name: "Universities South Africa", short: "USAf", url: "https://www.usaf.ac.za", note: "Applications" },
-  { name: "Estcourt Youth Collective", short: "EYC", url: "https://www.sayouth.mobi", note: "Community" },
+  {
+    name: "Universities South Africa",
+    short: "USAf",
+    url: "https://www.usaf.ac.za",
+    note: "Applications",
+  },
+  {
+    name: "Estcourt Youth Collective",
+    short: "EYC",
+    url: "https://www.sayouth.mobi",
+    note: "Community",
+  },
   { name: "Partner seat open", short: "YOU", url: "/get-involved", note: "SINGAWE needs you" },
 ];
+
+export type SchoolPhoto = { src: string; caption: string; year: number };
+
+export type PartnerSchool = {
+  id: string;
+  name: string;
+  websiteUrl: string;
+  photos: SchoolPhoto[];
+};
+
+/**
+ * Schools with a live website built and handed over by SINGAWEB. Each
+ * school's `photos` fills its own "View gallery" dialog on the SINGAWEB
+ * programme page — leave empty until real event photos exist.
+ */
+export const SINGAWEB_SCHOOLS: PartnerSchool[] = [
+  {
+    id: "enkomokazini",
+    name: "Enkomokazini Technical School",
+    websiteUrl: "https://enkomokazini-technical-school-main.vercel.app/",
+    photos: [
+      { src: "enkomokazini1", caption: "Three learners on the school grounds", year: 2026 },
+      {
+        src: "enkomokazini4",
+        caption: "DUT Student Course Guides, handed out and read",
+        year: 2026,
+      },
+      {
+        src: "enkomokazini3",
+        caption: "A classroom session, listening and reading along",
+        year: 2026,
+      },
+      { src: "enkomokazini2", caption: "Between sessions at Enkomokazini", year: 2026 },
+      { src: "enkomokazini5", caption: "The Enkomokazini group, together", year: 2026 },
+    ],
+  },
+  {
+    id: "phuthini",
+    name: "Phuthini Secondary School",
+    websiteUrl: "https://phuthini-secondary-school-main.vercel.app/",
+    photos: [
+      {
+        src: "phuthini2",
+        caption: "Learners and a Guide gathered outside the classrooms",
+        year: 2026,
+      },
+      { src: "phuthini1", caption: "Two learners between sessions", year: 2026 },
+      {
+        src: "phuthini3",
+        caption: 'The Phuthini crest — "Creating an educated citizenry"',
+        year: 2026,
+      },
+      { src: "phuthini4", caption: "A Guide with Journeyers outside the school", year: 2026 },
+      { src: "phuthini5", caption: "Four Journeyers together on campus", year: 2026 },
+    ],
+  },
+];
+
+/**
+ * Career Yum — external careers guidance platform linked from TACA.
+ */
+export const CAREER_YUM = {
+  label: "Career Yum",
+  blurb: "Explore career paths, industries and practical next steps.",
+  websiteUrl: "https://careeryum.co.za/",
+  // TODO: replace with Career Yum's actual guide-page URL once confirmed —
+  // points at the homepage for now.
+  guideUrl: "https://careeryum.co.za/",
+};
+
+/** External tool linked from the TACA programme page. */
+export const TACA_MATRIC_SYSTEM = {
+  label: "TACA Matric Management System",
+  url: "https://taca-matric-management-system.vercel.app/",
+};
 
 /**
  * `opens`/`closes` are ISO dates (YYYY-MM-DD) used to compute a live
@@ -512,7 +653,8 @@ export const OPPORTUNITIES = [
     org: "Durban University of Technology",
     category: "Study",
     opens: "2026-04-01",
-    closes: "2026-10-15",
+    // Closed — update to next intake's real dates once DUT publishes them.
+    closes: "2026-10-05",
     body: "Applications into DUT's engineering, health, arts and management faculties. TACA runs sit-down sessions to complete these together.",
     url: "https://www.dut.ac.za/apply-online/",
   },
@@ -563,40 +705,31 @@ export const OPPORTUNITIES = [
  * the homepage carousel asks for help, the form shown matches the kind of
  * opportunity they clicked — funding, study, work or a competition — rather
  * than one generic enquiry form.
- * Paste a Google Form embed URL into `embedUrl` to make it live; until then
- * a graceful mailto fallback is shown, pre-filled with the opportunity name.
+ * These built-in forms submit directly to the shared Supabase inbox.
  */
 export const OPPORTUNITY_HELP_FORMS: Record<
   "Funding" | "Study" | "Work" | "Competition",
-  { title: string; blurb: string; embedUrl: string; height?: number }
+  { title: string; blurb: string }
 > = {
   Funding: {
     title: "Funding application help",
     blurb:
       "Bursaries, scholarships and financial aid — we help you gather documents and submit before the deadline.",
-    embedUrl: "",
-    height: 1000,
   },
   Study: {
     title: "Study application help",
     blurb:
       "University, TVET college and clearing-house applications — TACA sits beside you until submit is pressed.",
-    embedUrl: "",
-    height: 1000,
   },
   Work: {
     title: "Work opportunity help",
     blurb:
       "CVs, applications and interview preparation for learnerships, internships and work opportunities.",
-    embedUrl: "",
-    height: 1000,
   },
   Competition: {
     title: "Competition entry help",
     blurb:
       "Projects, entries and presentations for competitions and science fairs — Makers Lab helps you prepare.",
-    embedUrl: "",
-    height: 1000,
   },
 };
 
@@ -678,47 +811,41 @@ export type GalleryEvent = {
   title: string;
   theme: string;
   year: number;
+  /** 1 (January) – 12 (December) — the month this event started, for month-level filtering. */
+  month: number;
   date: string;
   overview: string;
   photos: GalleryPhoto[];
   /** true when this event has a real video (see TACA_FILM_VIDEO in @/lib/gallery-photos) */
   hasVideo?: boolean;
+  /** Links this event to a programme/initiative detail page's Gallery section. */
+  programmeSlug?: string;
 };
+
+export const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 export const GALLERY_EVENTS: GalleryEvent[] = [
   {
-    id: "phuthini-first-afternoon",
-    title: "The first afternoon at Phuthini",
-    theme: "Journeyers",
-    year: 2024,
-    date: "March 2024",
-    overview:
-      "One classroom, one afternoon, twenty-three learners and a whiteboard. No programme names yet — only a promise that we would come back. This is where SINGAWE's whole method started: showing up, and then showing up again.",
-    photos: [
-      { src: "hero", caption: "Phuthini Secondary School, Loskop" },
-      { src: "community", caption: "Learners gathering after the first session" },
-      { src: "mentorship", caption: "A first conversation about what stood in the way" },
-    ],
-  },
-  {
-    id: "walk-along-sessions",
-    title: "Walk-Along mentorship sessions",
-    theme: "Walk-Along",
-    year: 2024,
-    date: "August 2024",
-    overview:
-      "Walk-Along is our mentorship engine in motion — a Guide and a Journeyer meeting on the same date every month, working through whatever stands between here and the next opportunity.",
-    photos: [
-      { src: "mentorship", caption: "A Guide and Journeyer working through an application" },
-      { src: "hero", caption: "A monthly check-in, written down and followed up" },
-    ],
-  },
-  {
     id: "indigenous-language-hackathon",
     title: "Indigenous Language Innovation Week Hackathon",
-    theme: "COMHACK",
+    theme: "MENTORED",
     year: 2026,
+    month: 5,
     date: "29–30 May 2026",
+    programmeSlug: "mentored",
     overview:
       "A 48-hour hackathon at Durban University of Technology, co-hosted with the Isabelo Sempumelelo Foundation: teams building proof-of-concept ideas at the intersection of indigenous language and technology, coached and judged over two days on campus.",
     photos: [
@@ -737,9 +864,11 @@ export const GALLERY_EVENTS: GalleryEvent[] = [
     title: "TACA in the classroom",
     theme: "TACA",
     year: 2026,
+    month: 8,
     date: "August 2026",
+    programmeSlug: "taca",
     overview:
-      "Technology Awareness & Capability Access on the ground: digital literacy and application support taken directly to partner schools. This session's short film is a real clip from the day, not a placeholder.",
+      "Technology Awareness Career Advisory in the classroom: learners explore technology and career pathways through school visits and partner-led sessions. This session's short film is a real clip from the day, not a placeholder.",
     hasVideo: true,
     photos: [
       { src: "taca1", caption: "Learners together for a TACA session" },
@@ -748,6 +877,15 @@ export const GALLERY_EVENTS: GalleryEvent[] = [
       { src: "taca4", caption: "Questions after the session" },
       { src: "taca5", caption: "A moment after class" },
       { src: "taca6", caption: "The group, outside after the session" },
+      { src: "tacaDut1", caption: "Learners set off for DUT Student Recruitment Day" },
+      { src: "tacaDut2", caption: "At the DUT Student Recruitment backdrop" },
+      { src: "tacaDut3", caption: "Learners with their course guides" },
+      { src: "tacaDut4", caption: "The group at the university open day" },
+      { src: "enkomokazini1", caption: "Learners at the TACA school session" },
+      { src: "enkomokazini2", caption: "Preparing for the research and careers session" },
+      { src: "enkomokazini3", caption: "A classroom session at the partner school" },
+      { src: "enkomokazini4", caption: "Reading the DUT Student Course Guides" },
+      { src: "enkomokazini5", caption: "The school group between sessions" },
     ],
   },
   {
@@ -755,6 +893,7 @@ export const GALLERY_EVENTS: GalleryEvent[] = [
     title: "Eskom Expo for Young Scientists — Q&A prep",
     theme: "Makers Lab",
     year: 2026,
+    month: 5,
     date: "May 2026",
     overview:
       "Before a learner stands in front of an Eskom Expo judging panel, Makers Lab runs the Q&A first — the questions, the pressure and the confidence to answer both, rehearsed in the classroom.",
@@ -770,44 +909,72 @@ export const GALLERY_EVENTS: GalleryEvent[] = [
     ],
   },
   {
-    id: "sisterhood-first-circle",
-    title: "Sisterhood's first circle",
-    theme: "Sisterhood",
+    id: "mentored-eskom-expo",
+    title: "Guides at the Eskom Expo for Young Scientists",
+    theme: "MENTORED",
     year: 2026,
-    date: "February 2026",
+    month: 10,
+    date: "October 2026",
+    programmeSlug: "mentored",
     overview:
-      "The first circle for women who became mothers under 25 — mental health, physical wellbeing and the economic footing to move forward. Confidence work first, because everything else depends on it.",
+      "Guides travelled with Journeyers to the Eskom Expo for Young Scientists — the same stage a former mentee, Olwethu, has since returned to as a judge. This is mentorship measured the way SINGAWE counts it: in people who come back.",
     photos: [
-      { src: "community", caption: "The first circle gathers in Estcourt" },
-      { src: "mentorship", caption: "Confidence work, one conversation at a time" },
+      { src: "mentored1", caption: "A Journeyer at the Expo, lanyard on and ready to present" },
+      { src: "mentored2", caption: "Four Journeyers together on the Expo grounds" },
+      { src: "mentored3", caption: "A Guide with the group between sessions" },
+      { src: "mentored4", caption: "Reviewing a presentation before judging" },
+      { src: "mentored5", caption: "Breakfast with the Guides before the day begins" },
     ],
   },
   {
-    id: "singaweb-school-build",
-    title: "SINGAWEB school website build",
-    theme: "SINGAWEB",
+    id: "comhack-ai-and-opportunity",
+    title: "Eskom Expo and the ETAIN AI panel",
+    theme: "COMHACK",
     year: 2026,
-    date: "May 2026",
+    month: 10,
+    date: "October 2026",
+    programmeSlug: "comhack",
     overview:
-      "A free website designed, built and handed over to a school that has never had one — with staff trained to keep it running long after we leave.",
+      "From the Eskom Expo opportunity floor to a panel on where artificial intelligence is taking KwaZulu-Natal — COMHACK followed the opportunities, then sat in the room where the next ones are being built.",
     photos: [
-      { src: "mentorship", caption: "Training staff to maintain their new site" },
-      { src: "hero", caption: "Handover day at the school" },
+      { src: "comhack1", caption: "Two attendees with their Eskom Expo programme" },
+      { src: "comhack2", caption: "A media interview recorded on the sidelines" },
+      { src: "comhack3", caption: "The ETAIN panel on AI in KwaZulu-Natal" },
+      { src: "comhack4", caption: "Taking notes during the panel discussion" },
     ],
   },
   {
-    id: "torchbearers-return",
-    title: "Torchbearers return to guide",
-    theme: "Torchbearers",
+    id: "pts-capacity-building-workshop",
+    title: "Practitioner-to-Scholar Capacity Building Workshop",
+    theme: "COMHACK",
     year: 2026,
-    date: "June 2026",
+    month: 8,
+    date: "7–8 August 2026",
+    programmeSlug: "comhack",
     overview:
-      "Journeyers who completed a programme, returning as Guides for the next person. Our legacy, measured the only way we accept: in people who came back.",
+      "SINGAWE was represented at the Practitioner-to-Scholar Programme's Capacity Building Workshop at SICAS Guest House, Westridge — themed 'From Community Practice to Scholarly Knowledge.' Two days turning what we do on the ground into research other practitioners can use.",
     photos: [
-      { src: "hero", caption: "A Torchbearer returning to walk with the next Journeyer" },
-      { src: "community", caption: "The walk continues, in the other direction" },
+      {
+        src: "comhackPts1",
+        caption: "The workshop floor, DUT's Practitioner-to-Scholar Programme in session",
+      },
+      { src: "comhackPts2", caption: "Presenting at the Capacity Building Workshop" },
+      { src: "comhackPts3", caption: "A portrait break on the SICAS Guest House terrace" },
+      { src: "comhackPts4", caption: "Between sessions, Westridge" },
     ],
   },
+];
+
+export const GALLERY_THEMES = [
+  "Journeyers",
+  "Walk-Along",
+  "MENTORED",
+  "TACA",
+  "Makers Lab",
+  "Sisterhood",
+  "SINGAWEB",
+  "Torchbearers",
+  "COMHACK",
 ];
 
 export const GALLERY_EVENT_YEARS = Array.from(new Set(GALLERY_EVENTS.map((e) => e.year))).sort();
@@ -822,7 +989,11 @@ export type PersonCircle =
   | "Torchbearer"
   | "Steward"
   | "Visionary"
-  | "Champion";
+  | "Companion"
+  | "Team"
+  | "Community";
+
+export type PersonLink = { label: string; url: string };
 
 export const PERSON_CIRCLES: PersonCircle[] = [
   "Visionary",
@@ -830,23 +1001,27 @@ export const PERSON_CIRCLES: PersonCircle[] = [
   "Guide",
   "Journeyer",
   "Torchbearer",
-  "Champion",
+  "Companion",
+  "Team",
+  "Community",
 ];
 
-export const PEOPLE: {
+const PEOPLE_SOURCE: {
   slug: string;
   name: string;
   circle: PersonCircle;
   field: string;
   place: string;
   initials: string;
-  photo: string;
-  year: number;
+  /** Omit when no real photo exists — the card then shows initials, never a stand-in photo. */
+  photo?: string;
+  year: number | null;
   /** Month and year this person joined, or took up this specific role. */
-  joined: string;
+  joined?: string;
   brief: string;
   story: string[];
   quote?: string;
+  links?: PersonLink[];
 }[] = [
   {
     slug: "kwanele-mazibuko",
@@ -856,217 +1031,299 @@ export const PEOPLE: {
     field: "Founder & Executive Director",
     place: "KwaZulu-Natal",
     initials: "KM",
-    photo: "p1",
+    photo: "founder1",
     year: 2024,
     brief: "Founded SINGAWE in 2024.",
     story: [
       "SINGAWE started with one person who got through a door and refused to let it close behind them.",
       "The Durban University of Technology made that door possible. The Foundation exists so that the next person does not need luck to find it.",
     ],
-    quote: "We are not building another initiative. We are building the habit of joining each other.",
+    quote:
+      "We are not building another initiative. We are building the habit of joining each other.",
   },
   {
-    slug: "steward-governance",
-    joined: "August 2024",
-    name: "Nomsa Dlamini",
+    slug: "nokwanda-ngubane",
     circle: "Steward",
-    field: "Governance & Safeguarding",
-    place: "Durban",
-    initials: "ND",
-    photo: "p3",
-    year: 2024,
-    brief: "Holds the Charter and the safeguarding framework.",
-    story: ["Stewards keep the Foundation honest to its own Charter."],
-  },
-  {
-    slug: "steward-finance",
-    joined: "February 2025",
-    name: "Sipho Ngcobo",
-    circle: "Steward",
-    field: "Finance & Compliance",
-    place: "Pietermaritzburg",
-    initials: "SN",
-    photo: "p4",
-    year: 2025,
-    brief: "Every rand accounted for, publicly.",
-    story: ["Transparency is a safeguarding measure, not a formality."],
-  },
-  {
-    slug: "guide-engineering",
-    joined: "May 2024",
-    name: "Thabo Mkhize",
-    circle: "Guide",
-    field: "Engineering & Technology",
-    place: "Estcourt",
-    initials: "TM",
-    photo: "p1",
-    year: 2024,
-    brief: "One structured hour a month, every month.",
-    story: ["Guides are not asked to fund anyone. They are asked to be consistent."],
-  },
-  {
-    slug: "guide-health",
-    joined: "March 2025",
-    name: "Zanele Khumalo",
-    circle: "Guide",
-    field: "Health & Wellbeing",
-    place: "Loskop",
-    initials: "ZK",
-    photo: "p2",
-    year: 2025,
-    brief: "Nursing, medicine and Sisterhood wellbeing.",
-    story: ["Walks with Journeyers moving into health careers."],
-  },
-  {
-    slug: "guide-education",
-    joined: "January 2025",
-    name: "Lerato Mahlangu",
-    circle: "Guide",
-    field: "Education & Academia",
-    place: "Phuthini Secondary",
-    initials: "LM",
-    photo: "p3",
-    year: 2025,
-    brief: "Applications, study skills, matric year.",
-    story: ["Present at Phuthini Secondary School since the first afternoon."],
-  },
-  {
-    slug: "journeyer-loskop",
-    joined: "September 2024",
-    name: "Ayanda M.",
-    circle: "Journeyer",
-    field: "Grade 12, Physical Sciences",
-    place: "Loskop",
-    initials: "AM",
-    photo: "p6",
-    year: 2024,
-    brief: "Walking towards an engineering application.",
+    name: "Nokwanda Ngubane",
+    field: "Founding Director · CFO, Treasurer & Secretary",
+    place: "Durban, KwaZulu-Natal",
+    initials: "NN",
+    photo: "nokwanda-ngubane",
+    year: null,
+    brief:
+      "A founding director who supports SINGAWE's financial and administrative stewardship.",
     story: [
-      "The barrier was never ambition. It was a missing document and an unpaid application fee.",
-      "This story is being written as it is walked.",
+      "Nokwanda studies Internet of Things at Durban University of Technology and serves as SINGAWE's CFO, Treasurer and Secretary.",
+      "Her interests include artificial intelligence, machine learning, automation and embedded systems. She brings experience in volunteering, public speaking, entrepreneurship and community engagement.",
+    ],
+    links: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/nokwanda-ngubane-01327a331" }],
+  },
+  {
+    slug: "nwabisa-maqakamba",
+    joined: "Early 2026",
+    name: "Nwabiswa Maqakamba",
+    circle: "Steward",
+    field: "Co-Executive Director & Deputy Chairperson · Business Analyst",
+    place: "KwaZulu-Natal",
+    initials: "NM",
+    photo: "nwabiswa-maqakamba",
+    year: 2026,
+    brief: "A SINGAWE co-executive director with a background in ICT business intelligence.",
+    story: [
+      "Nwabiswa is an aspiring Business Intelligence professional interested in data analysis, reporting and turning information into meaningful insight.",
+      "She holds a Diploma in ICT Business Analysis and an Advanced Diploma in ICT Business Intelligence.",
+    ],
+    links: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/nwabiswa-maqakamba-6a9b14305/" }],
+  },
+  {
+    slug: "olwethu-mswane",
+    joined: "2026",
+    name: "Olwethu Mswane",
+    circle: "Torchbearer",
+    field: "BCom Accounting Student · Eskom Expo Alumna & Judge",
+    place: "KwaZulu-Natal",
+    initials: "OM",
+    photo: "olwethu-mswane",
+    year: 2026,
+    brief:
+      "A former Eskom Expo participant who returned to support young innovators as a judge and mentor.",
+    story: [
+      "Olwethu is pursuing a BCom in Accounting Extended at the University of KwaZulu-Natal. Her journey through the Eskom Expo developed her leadership, research and problem-solving skills.",
+      "In 2026, she returned to the Expo as a judge, supporting learners in the same community where she once competed.",
+    ],
+    links: [
+      { label: "LinkedIn", url: "https://www.linkedin.com/in/olwethu-mswane-0224a0349" },
+      { label: "Portfolio", url: "https://olwethus-financial-spark.lovable.app" },
+    ],
+    quote:
+      "Being a judge at the Eskom Expo Regionals was a wonderful and meaningful experience. I represented Singawe Foundation and judged projects in Computer Science and Software Development, the same category I competed in last year. I was impressed by the amazing projects and the creativity of the learners. Oh I also met new friends from DUT and UKZN, which made the experience even more special. I decided to become a judge because I wanted to give back to the Expo community and support other young innovators. I feel proud and grateful to have experienced the Expo from a different perspective this year. I would encourage anyone considering becoming a judge or participating next year to go for it, it is a great opportunity to learn, meet new people and be inspired by amazing ideas.",
+  },
+  {
+    slug: "charlene-makwara",
+    joined: "2025",
+    name: "Charlene Chay Makwara",
+    circle: "Guide",
+    field: "Software Developer · Technology & Youth Development",
+    place: "Durban, KwaZulu-Natal",
+    initials: "CM",
+    photo: "charlene-makwara",
+    year: 2025,
+    brief:
+      "A software developer interested in using technology and innovation to solve real-world problems.",
+    story: [
+      "Charlene works across software development, AI-driven solutions and digital innovation. Charlene also contributes to sports management and youth development.",
+      "At SINGAWE, Charlene brings a practical technology perspective to work with young people.",
+    ],
+    links: [
+      { label: "Portfolio", url: "https://charlene-makwara-portfolio.vercel.app" },
+      { label: "GitHub", url: "https://github.com/MakChay" },
     ],
   },
   {
-    slug: "journeyer-estcourt",
-    joined: "April 2025",
-    name: "Sanele B.",
-    circle: "Journeyer",
-    field: "TVET, Information Technology",
-    place: "Estcourt",
-    initials: "SB",
-    photo: "p6",
+    slug: "ict-mandisa-biyela",
+    joined: "2025",
+    name: "Mandisa Biyela",
+    circle: "Guide",
+    field: "Mentor · ICT Graduate · Robotics & AI Research",
+    place: "Durban, KwaZulu-Natal",
+    initials: "MB",
+    photo: "mandisa-biyela",
     year: 2025,
-    brief: "Found a college pathway through COMHACK.",
-    story: ["Opportunity is not scarce — it is unannounced."],
+    brief: "An ICT graduate and SINGAWE mentor who supports young people in technology and research.",
+    story: [
+      "Mandisa holds a Bachelor of Information and Communication Technology from Durban University of Technology and works in ICT solutions.",
+      "She is part of DUT's Advanced Robotics and Mechatronic Systems Lab, where her interests include robotics, AI, IoT and smart systems. She enjoys helping young people build confidence in research and technical skills.",
+    ],
+    links: [
+      { label: "LinkedIn", url: "https://www.linkedin.com/in/nokuphila-mandisa-biyela-4573b0293/" },
+      { label: "GitHub", url: "https://github.com/MandisaBiyela" },
+    ],
   },
   {
-    slug: "sisterhood-circle",
-    joined: "February 2025",
-    name: "Nokwanda P.",
-    circle: "Journeyer",
-    field: "Sisterhood of SINGAWE",
-    place: "Estcourt",
-    initials: "NP",
-    photo: "p2",
-    year: 2025,
-    brief: "Returning to study with a circle around her.",
-    story: ["The Sisterhood works on confidence first, because everything else depends on it."],
-  },
-  {
-    slug: "journeyer-2026",
-    joined: "January 2026",
-    name: "Lindiwe S.",
-    circle: "Journeyer",
-    field: "Grade 11, Life Sciences",
-    place: "Loskop",
-    initials: "LS",
-    photo: "p5",
-    year: 2026,
-    brief: "First TACA cohort of 2026.",
-    story: ["Applications open in her Grade 12 year. The preparation started early."],
-  },
-  {
-    slug: "torchbearer-first",
-    joined: "June 2026",
-    name: "Mandla Zulu",
-    circle: "Torchbearer",
-    field: "Journeyer, 2024 cohort",
+    slug: "amahle-dunge",
+    joined: "2026",
+    name: "Amahle Lethukuthula Asanda Dunge",
+    circle: "Team",
+    field: "Head of Partnerships, KZN-ZASDC · ICT Application Development",
     place: "KwaZulu-Natal",
-    initials: "MZ",
-    photo: "p1",
+    initials: "AD",
+    photo: "amahle-dunge",
     year: 2026,
-    brief: "Walked it, came back to guide the next person.",
-    story: ["Torchbearers are the only measure of legacy we accept."],
+    brief:
+      "A final-year ICT student who brings a strategic, solutions-focused approach to partnerships.",
+    story: [
+      "Amahle is Head of Partnerships at KZN-ZASDC and studies ICT Application Development.",
+      "He is interested in connecting technology, people and opportunity through collaboration and sustainable growth.",
+    ],
   },
   {
-    slug: "champion-dut",
-    joined: "August 2024",
-    name: "Durban University of Technology",
-    circle: "Champion",
-    field: "Anchor supporter",
-    place: "Durban",
-    initials: "DUT",
-    photo: "p4",
-    year: 2024,
-    brief: "Inspired the journey and supported it since.",
-    story: ["Rooms, people and belief before there was anything to show."],
+    slug: "amanda-kunene",
+    joined: "2026",
+    name: "Amanda Bongi Owami Kunene",
+    circle: "Team",
+    field: "Head of Schools & Outreach · ICT Student",
+    place: "Durban, KwaZulu-Natal",
+    initials: "AK",
+    photo: "amanda-kunene",
+    year: 2026,
+    brief: "An ICT student leading school and community outreach at SINGAWE.",
+    story: [
+      "Amanda is a second-year Bachelor of ICT student at Durban University of Technology and SINGAWE's Head of Schools and Outreach.",
+      "Her interests include innovation, communication and community engagement. She has presented the Idioms Alive project at DUT's DataScientia Living Lab.",
+    ],
   },
   {
-    slug: "champion-phuthini",
-    joined: "March 2024",
-    name: "Phuthini Secondary School",
-    circle: "Champion",
-    field: "Founding partner school",
-    place: "Loskop",
-    initials: "PS",
-    photo: "p5",
-    year: 2024,
-    brief: "Where the first classroom said yes.",
-    story: ["One classroom, one afternoon, twenty-three learners."],
+    slug: "azania-zwane",
+    joined: "2026",
+    name: "Azania Zwane",
+    circle: "Team",
+    field: "ICT Application Development · Logistics & Operations",
+    place: "KwaZulu-Natal",
+    initials: "AZ",
+    photo: "azania-zwane",
+    year: 2026,
+    brief: "A final-year ICT student who enjoys turning ideas into working digital tools.",
+    story: [
+      "Azania is an aspiring full-stack developer and logistics and operations coordinator at KZN-ZASDC.",
+      "Azania enjoys building websites and making complex information easier to understand, and is proud to be part of the SINGAWE team.",
+    ],
+    links: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/azania-zwane-4591bb334" }],
+  },
+  {
+    slug: "buhlebendalo-mazibuko",
+    name: "Buhlebendalo Mawande Mazibuko",
+    circle: "Community",
+    field: "Mechanical Engineering Student",
+    place: "KwaZulu-Natal",
+    initials: "BM",
+    photo: "buhlebendalo-mazibuko",
+    year: null,
+    brief: "A mechanical engineering student at the University of Zululand.",
+    story: [
+      "Buhlebendalo is from the Estcourt, Loskop and Emandabeni area and studies Mechanical Engineering at the University of Zululand's Richards Bay campus.",
+    ],
+  },
+  {
+    slug: "masixole-mabhoza",
+    joined: "2026",
+    name: "Masixole Mabhoza",
+    circle: "Team",
+    field: "ICT Student · Operations Volunteer",
+    place: "Durban, KwaZulu-Natal",
+    initials: "MM",
+    photo: "masixole-mabhoza",
+    year: 2026,
+    brief: "An ICT student contributing to operations and community initiatives.",
+    story: [
+      "Masixole is an Information and Communication Technology student at Durban University of Technology and a volunteer supporting operations at KZN-ZASDC.",
+      "He brings experience in administration, data capture, communications and design, and is committed to creating opportunities for young people.",
+    ],
+    links: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/masixole-mabhoza-466658377/" }],
+  },
+  {
+    slug: "ntokozo-mazibuko",
+    joined: "2026",
+    name: "Ntokozo Zizile Mazibuko",
+    circle: "Team",
+    field: "Agriculture · Personal Development · Community Empowerment",
+    place: "KwaZulu-Natal",
+    initials: "NZ",
+    photo: "ntokozo-mazibuko",
+    year: 2026,
+    brief: "An agriculture enthusiast committed to learning and community growth.",
+    story: [
+      "Ntokozo is interested in livestock production, personal development and community empowerment.",
+      "Ntokozo's guiding motto is 'Doing it scared' — a reminder that growth often begins outside our comfort zones.",
+    ],
+    links: [{ label: "TikTok", url: "https://www.tiktok.com/@ntomazibuko" }],
+  },
+  {
+    slug: "phumelele-kubheka",
+    joined: "September 2026",
+    name: "Phumelele Kubheka",
+    circle: "Team",
+    field: "ICT Student · Aspiring Business Analyst",
+    place: "Durban, KwaZulu-Natal",
+    initials: "PK",
+    photo: "phumelele-kubheka",
+    year: 2026,
+    brief: "An ICT student building practical digital solutions and working toward a career in business analysis.",
+    story: [
+      "Phumelele is a second-year Bachelor of Information and Communications Technology student at Durban University of Technology.",
+      "Her experience includes workplace-learning platforms, software development and database architecture. She joined the SINGAWE team in September 2026.",
+    ],
+    links: [{ label: "TikTok", url: "https://www.tiktok.com/@eyakokhathide" }],
+  },
+  {
+    slug: "vhulenda-nefolovhodwe",
+    joined: "2026",
+    name: "Vhulenda Innocentia Nefolovhodwe",
+    circle: "Team",
+    field: "Developer · Aspiring Software Tester",
+    place: "South Africa",
+    initials: "VN",
+    photo: "vhulenda-nefolovhodwe",
+    year: 2026,
+    brief: "A SINGAWE developer with a strong interest in software quality and data analytics.",
+    story: [
+      "Vhulenda has an academic background in Information and Communication Technology and is developing her skills in software testing, data analytics and software development.",
+      "She is passionate about problem-solving, continuous learning and building reliable, efficient digital solutions.",
+    ],
+    links: [
+      { label: "LinkedIn", url: "https://www.linkedin.com/in/innocentia-nefolovhodwe/" },
+      { label: "GitHub", url: "https://github.com/Centia-0113" },
+    ],
+  },
+  {
+    slug: "thandolenkosi-hadebe",
+    name: "Thandolenkosi Candy Hadebe",
+    circle: "Guide",
+    field: "Incoming Guide · Mentor",
+    place: "South Africa",
+    initials: "TH",
+    year: null,
+    brief: "Joining SINGAWE in January 2027 to support people through mentorship and personal development.",
+    story: [
+      "Thandolenkosi is committed to helping people build confidence, grow through guidance and realise their potential.",
+      "Thandolenkosi values collaboration, continuous learning and the opportunity to contribute meaningfully to the community.",
+    ],
+    links: [
+      { label: "Instagram", url: "https://www.instagram.com/itss.candyy_" },
+      { label: "LinkedIn", url: "https://www.linkedin.com/in/thandolenkosi-hadebe-5b0b30370/" },
+      { label: "Portfolio", url: "https://hadebethandolenkosiportfolio.lovable.app" },
+    ],
   },
 ];
 
-export const PEOPLE_YEARS = [2024, 2025, 2026];
+export const PEOPLE = PEOPLE_SOURCE;
+export const PEOPLE_YEARS = Array.from(
+  new Set(PEOPLE.flatMap((person) => (person.year === null ? [] : [person.year]))),
+).sort((a, b) => a - b);
 
-
-/**
- * Google Form embeds. Paste the form's *embed* URL (Send → < > → the src="...")
- * here and the form renders directly on the website — no code change needed.
- * Leave a value as "" and the page shows a graceful "opening soon" card instead.
- */
+/** Enquiry forms submitted directly to the shared Supabase inbox. */
 export const FORMS: Record<
   "journeyer" | "guide" | "companion" | "collaborate" | "newsTip",
-  { title: string; blurb: string; embedUrl: string; height?: number }
+  { title: string; blurb: string }
 > = {
   journeyer: {
     title: "Journeyer interest form",
     blurb: "Tell us where you are and what is in the way. No cost, ever.",
-    embedUrl: "",
-    height: 1100,
   },
   guide: {
     title: "Guide interest form",
     blurb: "One structured hour a month, inside our safeguarding framework.",
-    embedUrl: "",
-    height: 1100,
   },
   companion: {
     title: "Companion & partnership form",
     blurb: "Funding, venues, equipment, expertise or opportunity pipelines.",
-    embedUrl: "",
-    height: 1100,
   },
   collaborate: {
     title: "Collaboration form",
     blurb: "Already running something? Bring it — we would rather join than duplicate.",
-    embedUrl: "",
-    height: 1100,
   },
   newsTip: {
     title: "Media & press enquiry form",
     blurb: "Journalists, editors and partners: request an interview or assets.",
-    embedUrl: "",
-    height: 900,
   },
 };
 
@@ -1149,14 +1406,16 @@ export const RESOURCES: Resource[] = [
     id: "singawe-foundation-guide",
     title: "The SINGAWE Foundation Guide",
     category: "Guides",
-    description: "Who we are, what we believe, and how the walk works — our philosophy, language and four programmes in one document.",
+    description:
+      "Who we are, what we believe, and how the walk works — our philosophy, language and four programmes in one document.",
     file: "/resources/singawe-foundation-guide.pdf",
   },
   {
     id: "opportunity-application-guide",
     title: "Opportunity Application Guide",
     category: "Guides",
-    description: "A step-by-step guide to applying for bursaries, study places, work and competitions.",
+    description:
+      "A step-by-step guide to applying for bursaries, study places, work and competitions.",
     file: "/resources/opportunity-application-guide.pdf",
   },
   {
@@ -1177,7 +1436,8 @@ export const RESOURCES: Resource[] = [
     id: "safeguarding-policy-summary",
     title: "Safeguarding Policy Summary",
     category: "Policies",
-    description: "Our commitments to every Journeyer, Guide and Companion, and how to raise a concern.",
+    description:
+      "Our commitments to every Journeyer, Guide and Companion, and how to raise a concern.",
     file: "/resources/safeguarding-policy-summary.pdf",
   },
 ];

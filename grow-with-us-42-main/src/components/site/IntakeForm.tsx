@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { BirthDetailsField } from "@/components/site/BirthDetailsField";
 import { SITE } from "@/lib/site-content";
+import { submitFormToSupabase } from "@/lib/forms-client";
 
 const inputClass =
   "rounded-sm border border-border bg-background px-4 py-3 text-base outline-none transition-colors focus:border-gold";
@@ -12,27 +13,39 @@ export function IntakeForm({
   blurb,
   submitLabel,
   requireCv = false,
+  formType,
 }: {
   title: string;
   blurb: string;
   submitLabel: string;
   requireCv?: boolean;
+  formType: "intake_journeyer" | "intake_guide";
 }) {
   const [age, setAge] = useState<number | null>(null);
   const [idFile, setIdFile] = useState<File | null>(null);
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [guardianConsent, setGuardianConsent] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   const isMinor = age !== null && age < 18;
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("sending");
+    const formData = new FormData(e.currentTarget);
+    formData.set("form_type", formType);
+    try {
+      await submitFormToSupabase(formType, formData);
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+    }
+  }
 
   return (
     <form
       className="rounded-sm border border-gold/40 bg-gold-soft/40 p-8 md:p-10"
-      onSubmit={(e) => {
-        e.preventDefault();
-        setSent(true);
-      }}
+      onSubmit={handleSubmit}
     >
       <h3 className="font-display text-2xl">{title}</h3>
       <p className="mt-2 text-sm text-muted-foreground">{blurb}</p>
@@ -92,8 +105,8 @@ export function IntakeForm({
           <div className="rounded-sm border border-gold/40 bg-gold-soft/30 p-5">
             <p className="eyebrow text-clay">Guardian details required</p>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-              Because this Journeyer is under 18, a parent or legal guardian must be listed and
-              must consent below.
+              Because this Journeyer is under 18, a parent or legal guardian must be listed and must
+              consent below.
             </p>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <label className="grid gap-2 text-sm">
@@ -117,6 +130,7 @@ export function IntakeForm({
               <input
                 required
                 type="checkbox"
+                name="guardianConsent"
                 checked={guardianConsent}
                 onChange={(e) => setGuardianConsent(e.target.checked)}
                 className="mt-0.5 size-4 shrink-0 accent-[var(--gold)]"
@@ -141,20 +155,32 @@ export function IntakeForm({
 
       <button
         type="submit"
-        disabled={isMinor && !guardianConsent}
+        disabled={(isMinor && !guardianConsent) || status === "sending"}
         className="mt-8 w-full rounded-sm bg-ink px-6 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-clay disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {sent ? "Thank you — we have your details" : submitLabel}
+        {status === "sending"
+          ? "Sending…"
+          : status === "sent"
+            ? "Thank you — we have your details"
+            : submitLabel}
       </button>
 
-      {sent && (
+      {status === "sent" && (
         <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-          This form is not yet wired to our intake system, so nothing was uploaded anywhere just
-          now. In the meantime, please email us directly at{" "}
+          A person reads and answers every message. If it's urgent, email us directly at{" "}
+          <a href={`mailto:${SITE.email}?subject=${encodeURIComponent(title)}`} className="slash">
+            {SITE.email}
+          </a>
+          .
+        </p>
+      )}
+      {status === "error" && (
+        <p className="mt-4 text-sm leading-relaxed text-destructive">
+          Something went wrong. Please email us directly at{" "}
           <a href={`mailto:${SITE.email}?subject=${encodeURIComponent(title)}`} className="slash">
             {SITE.email}
           </a>{" "}
-          and attach your documents — a person reads and answers every message.
+          and attach your documents.
         </p>
       )}
     </form>

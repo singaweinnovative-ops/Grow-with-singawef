@@ -3,10 +3,16 @@ import { Reveal } from "@/components/site/Reveal";
 import { VideoFrame } from "@/components/site/VideoFrame";
 import { PageHero } from "@/components/site/PageHero";
 import { PRINCIPLES, VALUES } from "@/lib/site-content";
-import community from "@/assets/community.jpg";
+import { getPublishedPeople } from "@/lib/site-content-db";
+import { galleryPhoto } from "@/lib/gallery-photos";
 import heroPortrait from "@/assets/hero-portrait.jpg";
+import singaweIntro from "@/assets/singawe-f-intro-720p.mp4";
+import introPoster from "@/assets/singawe-f-intro-poster.jpg";
 
 export const Route = createFileRoute("/about")({
+  loader: async () => ({
+    olwethu: (await getPublishedPeople()).find((person) => person.slug === "olwethu-mswane"),
+  }),
   head: () => ({
     meta: [
       { title: "About SINGAWE Foundation — Purpose, Vision & Values" },
@@ -27,6 +33,7 @@ export const Route = createFileRoute("/about")({
 });
 
 function About() {
+  const { olwethu } = Route.useLoaderData();
   return (
     <>
       <PageHero image={heroPortrait} alt="A young South African student, SINGAWE Foundation">
@@ -39,6 +46,33 @@ function About() {
           <div className="mt-8 h-px w-40 rule-draw bg-gold" />
         </Reveal>
       </PageHero>
+
+      <section className="mx-auto max-w-7xl px-6 py-16 lg:px-10 lg:py-24">
+        <Reveal className="mx-auto max-w-3xl text-center">
+          <p className="eyebrow text-clay">Who We Are</p>
+          <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
+            SINGAWE Foundation NPC is a public benefit organisation committed to empowering
+            individuals and strengthening communities through education, mentorship, leadership
+            development, innovation, STEAM, entrepreneurship and strategic partnerships.
+          </p>
+          <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
+            We believe that every individual possesses the potential to achieve meaningful success.
+            Too often, however, that potential remains unrealised because of barriers such as
+            limited access to information, resources, networks, guidance or opportunities.
+          </p>
+          <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
+            The Foundation exists to identify and nurture potential, reduce barriers wherever
+            possible and create meaningful pathways that bring individuals closer to opportunities
+            that can transform their lives.
+          </p>
+          <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
+            Our commitment extends beyond creating awareness. We prepare individuals, connect them
+            with opportunities, support them throughout their journey and continue investing in
+            their growth so that they are empowered to become confident leaders, innovators,
+            entrepreneurs, professionals and changemakers who create opportunities for others.
+          </p>
+        </Reveal>
+      </section>
 
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-10 lg:py-24">
         <Reveal className="grid gap-10 lg:grid-cols-2">
@@ -75,8 +109,9 @@ function About() {
           <Reveal delay={120}>
             <p className="eyebrow text-clay">Mission</p>
             <p className="mt-5 font-display text-[clamp(1.5rem,2.8vw,2.2rem)] leading-[1.25]">
-              To empower individuals and strengthen communities by expanding access to opportunity,
-              mentorship, education, innovation and leadership.
+              To empower individuals and strengthen communities by expanding access to
+              opportunities, mentorship, education, innovation and leadership that enable people to
+              realise their full potential and create lasting impact.
             </p>
             <ul className="mt-6 space-y-2 leading-relaxed text-muted-foreground">
               {[
@@ -150,8 +185,8 @@ function About() {
       <section className="mx-auto grid max-w-7xl gap-12 px-6 py-24 lg:grid-cols-2 lg:items-center lg:px-10">
         <Reveal>
           <img
-            src={community}
-            alt="Young community members standing together outdoors at golden hour"
+            src={galleryPhoto("phuthini4")}
+            alt="A Guide with Journeyers outside Phuthini Secondary School"
             width={1808}
             height={1008}
             loading="lazy"
@@ -194,11 +229,44 @@ function About() {
               “Governance is the faithful stewardship of purpose, people and public trust.”
             </p>
           </Reveal>
-          <Reveal delay={120} className="mt-12">
+        </div>
+      </section>
+
+      <section className="border-t border-border bg-sand">
+        <div className="mx-auto grid max-w-6xl gap-12 px-6 py-24 lg:grid-cols-[1.1fr_0.9fr] lg:px-10">
+          <Reveal>
+            <p className="eyebrow text-clay">In Their Words</p>
+            <h2 className="mt-4 text-[clamp(1.9rem,3.6vw,2.9rem)] leading-[1.08]">
+              The foundation film, told the only honest way — by the people who lived it.
+            </h2>
+            <p className="mt-6 leading-relaxed text-muted-foreground">
+              This introduction is told by the people who make the work happen. Here is one of
+              their stories in full — a former Eskom Expo participant who became a judge.
+            </p>
+            {olwethu?.quote ? (
+              <figure className="mt-8 border-l-2 border-gold pl-6">
+                <blockquote className="font-display text-xl leading-relaxed text-foreground">
+                  “{olwethu.quote}”
+                </blockquote>
+                <figcaption className="mt-4 text-sm text-muted-foreground">
+                  — {olwethu.name}, {olwethu.field}
+                </figcaption>
+              </figure>
+            ) : null}
+            <Link
+              to="/people/$slug"
+              params={{ slug: "olwethu-mswane" }}
+              className="slash mt-8 inline-block text-sm font-semibold transition-colors hover:text-clay"
+            >
+              Read more stories like this
+            </Link>
+          </Reveal>
+          <Reveal delay={120}>
             <VideoFrame
-              label="Founder's message · space reserved"
-              caption="A short address from our Founder & Executive Director will live here."
-              ratio="16 / 9"
+              label="SINGAWE Foundation"
+              caption="Our introduction, told by the people who make the work happen."
+              videoSrc={singaweIntro}
+              poster={introPoster}
             />
           </Reveal>
         </div>

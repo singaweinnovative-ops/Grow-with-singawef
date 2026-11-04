@@ -13,12 +13,15 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as CollaborateRouteImport } from './routes/collaborate'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as OpportunitiesRouteImport } from './routes/opportunities'
 import { Route as OurWorkRouteImport } from './routes/our-work'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SafetyRouteImport } from './routes/safety'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as WhoWeServeRouteImport } from './routes/who-we-serve'
+import { Route as ApiZaziRouteImport } from './routes/api/zazi'
 import { Route as GalleryIndexRouteImport } from './routes/gallery.index'
 import { Route as GalleryEventIdRouteImport } from './routes/gallery.$eventId'
 import { Route as GetInvolvedIndexRouteImport } from './routes/get-involved.index'
@@ -52,6 +55,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OpportunitiesRoute = OpportunitiesRouteImport.update({
   id: '/opportunities',
   path: '/opportunities',
@@ -77,9 +85,19 @@ const SafetyRoute = SafetyRouteImport.update({
   path: '/safety',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WhoWeServeRoute = WhoWeServeRouteImport.update({
   id: '/who-we-serve',
   path: '/who-we-serve',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiZaziRoute = ApiZaziRouteImport.update({
+  id: '/api/zazi',
+  path: '/api/zazi',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GalleryIndexRoute = GalleryIndexRouteImport.update({
@@ -148,12 +166,15 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/collaborate': typeof CollaborateRoute
   '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
   '/opportunities': typeof OpportunitiesRoute
   '/our-work': typeof OurWorkRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
   '/safety': typeof SafetyRoute
+  '/search': typeof SearchRoute
   '/who-we-serve': typeof WhoWeServeRoute
+  '/api/zazi': typeof ApiZaziRoute
   '/gallery/$eventId': typeof GalleryEventIdRoute
   '/get-involved/companion': typeof GetInvolvedCompanionRoute
   '/get-involved/guide': typeof GetInvolvedGuideRoute
@@ -172,12 +193,15 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/collaborate': typeof CollaborateRoute
   '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
   '/opportunities': typeof OpportunitiesRoute
   '/our-work': typeof OurWorkRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
   '/safety': typeof SafetyRoute
+  '/search': typeof SearchRoute
   '/who-we-serve': typeof WhoWeServeRoute
+  '/api/zazi': typeof ApiZaziRoute
   '/gallery/$eventId': typeof GalleryEventIdRoute
   '/get-involved/companion': typeof GetInvolvedCompanionRoute
   '/get-involved/guide': typeof GetInvolvedGuideRoute
@@ -197,12 +221,15 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/collaborate': typeof CollaborateRoute
   '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
   '/opportunities': typeof OpportunitiesRoute
   '/our-work': typeof OurWorkRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
   '/safety': typeof SafetyRoute
+  '/search': typeof SearchRoute
   '/who-we-serve': typeof WhoWeServeRoute
+  '/api/zazi': typeof ApiZaziRoute
   '/gallery/$eventId': typeof GalleryEventIdRoute
   '/get-involved/companion': typeof GetInvolvedCompanionRoute
   '/get-involved/guide': typeof GetInvolvedGuideRoute
@@ -223,12 +250,15 @@ export interface FileRouteTypes {
     | '/about'
     | '/collaborate'
     | '/contact'
+    | '/faq'
     | '/opportunities'
     | '/our-work'
     | '/privacy'
     | '/resources'
     | '/safety'
+    | '/search'
     | '/who-we-serve'
+    | '/api/zazi'
     | '/gallery/$eventId'
     | '/get-involved/companion'
     | '/get-involved/guide'
@@ -247,12 +277,15 @@ export interface FileRouteTypes {
     | '/about'
     | '/collaborate'
     | '/contact'
+    | '/faq'
     | '/opportunities'
     | '/our-work'
     | '/privacy'
     | '/resources'
     | '/safety'
+    | '/search'
     | '/who-we-serve'
+    | '/api/zazi'
     | '/gallery/$eventId'
     | '/get-involved/companion'
     | '/get-involved/guide'
@@ -271,12 +304,15 @@ export interface FileRouteTypes {
     | '/about'
     | '/collaborate'
     | '/contact'
+    | '/faq'
     | '/opportunities'
     | '/our-work'
     | '/privacy'
     | '/resources'
     | '/safety'
+    | '/search'
     | '/who-we-serve'
+    | '/api/zazi'
     | '/gallery/$eventId'
     | '/get-involved/companion'
     | '/get-involved/guide'
@@ -296,12 +332,15 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   CollaborateRoute: typeof CollaborateRoute
   ContactRoute: typeof ContactRoute
+  FaqRoute: typeof FaqRoute
   OpportunitiesRoute: typeof OpportunitiesRoute
   OurWorkRoute: typeof OurWorkRoute
   PrivacyRoute: typeof PrivacyRoute
   ResourcesRoute: typeof ResourcesRoute
   SafetyRoute: typeof SafetyRoute
+  SearchRoute: typeof SearchRoute
   WhoWeServeRoute: typeof WhoWeServeRoute
+  ApiZaziRoute: typeof ApiZaziRoute
   GalleryEventIdRoute: typeof GalleryEventIdRoute
   GetInvolvedCompanionRoute: typeof GetInvolvedCompanionRoute
   GetInvolvedGuideRoute: typeof GetInvolvedGuideRoute
@@ -346,6 +385,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/opportunities': {
       id: '/opportunities'
       path: '/opportunities'
@@ -381,11 +427,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SafetyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/who-we-serve': {
       id: '/who-we-serve'
       path: '/who-we-serve'
       fullPath: '/who-we-serve'
       preLoaderRoute: typeof WhoWeServeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/zazi': {
+      id: '/api/zazi'
+      path: '/api/zazi'
+      fullPath: '/api/zazi'
+      preLoaderRoute: typeof ApiZaziRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gallery/': {
@@ -480,12 +540,15 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   CollaborateRoute: CollaborateRoute,
   ContactRoute: ContactRoute,
+  FaqRoute: FaqRoute,
   OpportunitiesRoute: OpportunitiesRoute,
   OurWorkRoute: OurWorkRoute,
   PrivacyRoute: PrivacyRoute,
   ResourcesRoute: ResourcesRoute,
   SafetyRoute: SafetyRoute,
+  SearchRoute: SearchRoute,
   WhoWeServeRoute: WhoWeServeRoute,
+  ApiZaziRoute: ApiZaziRoute,
   GalleryEventIdRoute: GalleryEventIdRoute,
   GetInvolvedCompanionRoute: GetInvolvedCompanionRoute,
   GetInvolvedGuideRoute: GetInvolvedGuideRoute,

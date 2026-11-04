@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import logoDark from "@/assets/logo-dark-trim.png";
 import { SITE } from "@/lib/site-content";
+import { FORMSPREE_ENDPOINT } from "@/lib/env";
+import { submitFormToSupabase } from "@/lib/forms-client";
 import { SocialLinks } from "@/components/site/SocialIcons";
 import { ReportConcernForm } from "@/components/site/ReportConcernForm";
 import {
@@ -14,8 +16,32 @@ import {
 
 export function Footer() {
   const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
+  const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "sending" | "sent" | "error">(
+    "idle",
+  );
   const [reportOpen, setReportOpen] = useState(false);
+
+  async function handleSubscribe(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    setSubscribeStatus("sending");
+    const formData = new FormData(e.currentTarget);
+    formData.set("form_type", "newsletter");
+
+    try {
+      await submitFormToSupabase("newsletter", formData);
+      if (FORMSPREE_ENDPOINT) {
+        fetch(FORMSPREE_ENDPOINT, {
+          method: "POST",
+          headers: { Accept: "application/json" },
+          body: formData,
+        }).catch(() => {});
+      }
+      setSubscribeStatus("sent");
+    } catch {
+      setSubscribeStatus("error");
+    }
+  }
 
   return (
     <footer className="bg-ink text-cream">
@@ -55,10 +81,10 @@ export function Footer() {
                 { to: "/gallery", label: "Gallery" },
                 { to: "/resources", label: "Resources" },
                 { to: "/news", label: "News & Media" },
+                { to: "/faq", label: "FAQ" },
                 { to: "/get-involved", label: "Get Involved" },
                 { to: "/contact", label: "Contact" },
               ].map((l) => (
-
                 <li key={l.to}>
                   <Link to={l.to} className="transition-colors hover:text-gold">
                     {l.label}
@@ -100,7 +126,13 @@ export function Footer() {
                 </a>
               </li>
               <li>{SITE.phone}</li>
-              <li>{SITE.location}</li>
+              <li>
+                {SITE.registration.registeredAddressLines.map((line, i) => (
+                  <span key={i} className="block">
+                    {line}
+                  </span>
+                ))}
+              </li>
             </ul>
             <p className="mt-8 text-xs leading-relaxed text-cream/45">
               Governed by the Foundation Charter (SF-001), Version 1.0 — Issued for Execution.
@@ -112,19 +144,16 @@ export function Footer() {
             <p className="mt-6 text-sm leading-relaxed text-cream/65">
               One email a month — new opportunities, programme updates and stories from the walk.
             </p>
-            <form
-              className="mt-5 flex flex-col gap-2 sm:flex-row"
-              onSubmit={(e) => {
-                e.preventDefault();
-                setSubscribed(true);
-              }}
-            >
+            <form className="mt-5 flex flex-col gap-2 sm:flex-row" onSubmit={handleSubscribe}>
+              <input type="hidden" name="_subject" value="New newsletter signup" />
+              <input type="hidden" name="source" value="Footer newsletter" />
               <label className="sr-only" htmlFor="footer-newsletter-email">
                 Email address
               </label>
               <input
                 id="footer-newsletter-email"
                 type="email"
+                name="email"
                 required
                 placeholder="you@email.com"
                 value={email}
@@ -133,39 +162,61 @@ export function Footer() {
               />
               <button
                 type="submit"
-                className="shrink-0 rounded-sm bg-gold px-4 py-2.5 text-xs font-semibold text-ink transition-colors hover:bg-gold-soft"
+                disabled={subscribeStatus === "sending"}
+                className="shrink-0 rounded-sm bg-gold px-4 py-2.5 text-xs font-semibold text-ink transition-colors hover:bg-gold-soft disabled:opacity-60"
               >
-                Subscribe
+                {subscribeStatus === "sending" ? "Sending…" : "Subscribe"}
               </button>
             </form>
-            {subscribed && (
+            {subscribeStatus === "sent" && (
               <p className="mt-3 text-xs leading-relaxed text-cream/55">
-                Thank you — this list is being finalised. In the meantime write to{" "}
-                <a href={`mailto:${SITE.email}?subject=${encodeURIComponent("Newsletter signup")}`} className="underline hover:text-gold">
+                Thank you — you're on the list.
+              </p>
+            )}
+            {subscribeStatus === "error" && (
+              <p className="mt-3 text-xs leading-relaxed text-cream/55">
+                Something went wrong. Please write to{" "}
+                <a
+                  href={`mailto:${SITE.email}?subject=${encodeURIComponent("Newsletter signup")}`}
+                  className="underline hover:text-gold"
+                >
                   {SITE.email}
                 </a>{" "}
-                and we will add you by hand.
+                instead.
               </p>
             )}
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-4 border-t border-cream/12 pt-8 text-xs text-cream/50 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {new Date().getFullYear()} {SITE.legal}. All rights reserved.
-          </p>
+        <div className="mt-16 flex flex-col gap-4 border-t border-cream/12 pt-8 text-xs text-cream/50 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-1">
+            <p>
+              © {new Date().getFullYear()} {SITE.legal}. All rights reserved.
+            </p>
+            <p className="text-cream/40">
+              {SITE.legal} · CIPC Registration No.: {SITE.registration.cipcNumber} · Income Tax
+              Reference No.: {SITE.registration.taxRefNumber}
+            </p>
+          </div>
           <p className="font-display text-sm tracking-wide text-gold">{SITE.tagline}</p>
         </div>
       </div>
 
       <Sheet open={reportOpen} onOpenChange={setReportOpen}>
-        <SheetContent side="right" className="w-full overflow-y-auto bg-background text-foreground sm:max-w-lg">
+        <SheetContent
+          side="right"
+          className="w-full overflow-y-auto bg-background text-foreground sm:max-w-lg"
+        >
           <SheetHeader>
             <p className="eyebrow text-clay">Confidential</p>
             <SheetTitle className="font-display text-2xl">Report a concern</SheetTitle>
             <SheetDescription>
               Raise a safeguarding concern directly with our Stewards. See our{" "}
-              <Link to="/safety" className="underline hover:text-clay" onClick={() => setReportOpen(false)}>
+              <Link
+                to="/safety"
+                className="underline hover:text-clay"
+                onClick={() => setReportOpen(false)}
+              >
                 Safety &amp; Safeguarding
               </Link>{" "}
               commitments.

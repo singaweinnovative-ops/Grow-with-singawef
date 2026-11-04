@@ -1,14 +1,18 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import type { ProgrammeBrand } from "@/lib/programme-brands";
+import { getInitiativeLogo } from "@/lib/initiative-logos";
 
 type Props = {
   brand: ProgrammeBrand;
   name: string;
   family: string;
+  slug: string;
+  onSectionClick?: (id: string) => void;
 };
 
-export function ProgrammeNav({ brand, name, family }: Props) {
+export function ProgrammeNav({ brand, name, family, slug, onSectionClick }: Props) {
+  const logo = getInitiativeLogo(slug);
   const [active, setActive] = useState(brand.sections[0]?.id ?? "");
 
   useEffect(() => {
@@ -43,16 +47,29 @@ export function ProgrammeNav({ brand, name, family }: Props) {
           className="flex shrink-0 items-center gap-2.5 text-sm font-semibold"
           style={{ color: brand.accent }}
         >
-          <span
-            className="grid h-7 w-7 place-items-center rounded-sm text-[0.7rem] font-bold"
-            style={{ backgroundColor: brand.accent, color: brand.onAccent }}
-          >
-            {brand.short.slice(0, 2).toUpperCase()}
-          </span>
+          {logo ? (
+            <img
+              src={logo}
+              alt=""
+              width={28}
+              height={28}
+              className="h-7 w-7 shrink-0 rounded-sm bg-white object-contain p-0.5"
+            />
+          ) : (
+            <span
+              className="grid h-7 w-7 place-items-center rounded-sm text-[0.7rem] font-bold"
+              style={{ backgroundColor: brand.accent, color: brand.onAccent }}
+            >
+              {brand.short.slice(0, 2).toUpperCase()}
+            </span>
+          )}
           <span className="hidden sm:inline">{brand.short}</span>
         </Link>
 
-        <span className="hidden h-4 w-px shrink-0 lg:block" style={{ backgroundColor: `${brand.accent}40` }} />
+        <span
+          className="hidden h-4 w-px shrink-0 lg:block"
+          style={{ backgroundColor: `${brand.accent}40` }}
+        />
 
         <p
           className="hidden shrink-0 text-xs italic lg:block"
@@ -66,6 +83,7 @@ export function ProgrammeNav({ brand, name, family }: Props) {
             <a
               key={s.id}
               href={`#${s.id}`}
+              onClick={() => onSectionClick?.(s.id)}
               className="shrink-0 rounded-sm px-3 py-1.5 text-xs font-semibold transition-colors"
               style={
                 active === s.id

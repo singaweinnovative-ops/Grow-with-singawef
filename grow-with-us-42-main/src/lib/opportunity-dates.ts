@@ -1,5 +1,9 @@
 export function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" });
+  return new Date(iso).toLocaleDateString("en-ZA", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 function daysBetween(a: Date, b: Date): number {
@@ -19,7 +23,10 @@ export type OpportunityStatus =
  * Where an opportunity stands today: not yet open, open and counting down,
  * closed, or rolling with no fixed window at all.
  */
-export function getOpportunityStatus(opens: string | null, closes: string | null): OpportunityStatus {
+export function getOpportunityStatus(
+  opens: string | null,
+  closes: string | null,
+): OpportunityStatus {
   const today = new Date();
 
   if (!opens && !closes) return { kind: "rolling" };
@@ -37,12 +44,19 @@ export function getOpportunityStatus(opens: string | null, closes: string | null
   return { kind: "open", days: null };
 }
 
+/** False once an opportunity's closing date has passed — used to drop it from public listings automatically. */
+export function isOpportunityActive(opens: string | null, closes: string | null): boolean {
+  return getOpportunityStatus(opens, closes).kind !== "closed";
+}
+
 export function statusLabel(status: OpportunityStatus): string {
   switch (status.kind) {
     case "rolling":
       return "Rolling — no fixed deadline";
     case "upcoming":
-      return status.days === 0 ? "Opens today" : `Opens in ${status.days} day${status.days === 1 ? "" : "s"}`;
+      return status.days === 0
+        ? "Opens today"
+        : `Opens in ${status.days} day${status.days === 1 ? "" : "s"}`;
     case "open":
       if (status.days === null) return "Open now";
       if (status.days === 0) return "Closes today";

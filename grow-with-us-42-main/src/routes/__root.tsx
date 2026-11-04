@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { CookieNotice } from "@/components/site/CookieNotice";
+import { ZaziChat } from "@/components/site/ZaziChat";
 
 function NotFoundComponent() {
   return (
@@ -91,7 +92,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "SINGAWE Foundation — Your Journey. Our Commitment." },
       {
         property: "og:description",
-        content: "We Are For You. Unlocking potential through mentorship, education and opportunity.",
+        content:
+          "We Are For You. Unlocking potential through mentorship, education and opportunity.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -157,7 +159,7 @@ function RootComponent() {
         <Footer />
       </div>
       <CookieNotice />
+      <ZaziChat />
     </QueryClientProvider>
-
   );
 }

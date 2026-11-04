@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import logoLight from "@/assets/logo-light-trim.png";
 import { cn } from "@/lib/utils";
+import { SiteSearch } from "@/components/site/SiteSearch";
 
 type Item = { to: string; label: string };
 type Group = { label: string; items: Item[] };
@@ -94,14 +95,17 @@ export function Header() {
           ))}
         </nav>
 
-        <Link
-          to="/get-involved"
-          hash="journeyer"
-          className="group hidden shrink-0 items-center gap-1.5 rounded-sm bg-ink px-4 py-2 text-[0.78rem] font-semibold text-cream transition-colors hover:bg-clay lg:inline-flex"
-        >
-          Join Us Now
-          <ArrowRight className="size-3.5 transition-transform duration-300 group-hover:translate-x-1" />
-        </Link>
+        <div className="flex shrink-0 items-center gap-3">
+          <SiteSearch />
+          <Link
+            to="/get-involved"
+            hash="journeyer"
+            className="group hidden items-center gap-1.5 rounded-sm bg-ink px-4 py-2 text-[0.78rem] font-semibold text-cream transition-colors hover:bg-clay lg:inline-flex"
+          >
+            Join Us Now
+            <ArrowRight className="size-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+          </Link>
+        </div>
 
         <button
           type="button"

@@ -23,7 +23,7 @@ export function GalleryFilm({
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number | null>(null);
   const startRef = useRef<number>(0);
 
   useEffect(() => {
@@ -42,9 +42,9 @@ export function GalleryFilm({
     };
     rafRef.current = requestAnimationFrame(tick);
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
-  }, [playing, slides.length, index]);
+  }, [playing, slides.length, index, videoSrc]);
 
   const goTo = (i: number) => {
     setIndex(i);
@@ -131,7 +131,7 @@ export function GalleryFilm({
         <div className="flex items-end justify-between gap-4">
           <div>
             <p className="eyebrow text-gold">{label}</p>
-            <p className="mt-1 text-sm text-cream">{slides[index].caption}</p>
+            <p className="mt-1 text-sm text-cream">{slides[index]?.caption ?? ""}</p>
           </div>
           <button
             type="button"

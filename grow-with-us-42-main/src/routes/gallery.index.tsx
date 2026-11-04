@@ -10,8 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GALLERY_EVENTS, GALLERY_EVENT_YEARS } from "@/lib/site-content";
+import { GALLERY_EVENTS, GALLERY_EVENT_YEARS, GALLERY_THEMES, MONTH_NAMES } from "@/lib/site-content";
 import { galleryPhoto } from "@/lib/gallery-photos";
+import { getInitiativeLogo } from "@/lib/initiative-logos";
 import hero from "@/assets/hero-portrait.jpg";
 
 export const Route = createFileRoute("/gallery/")({
@@ -26,7 +27,8 @@ export const Route = createFileRoute("/gallery/")({
       { property: "og:title", content: "SINGAWE Foundation Gallery" },
       {
         property: "og:description",
-        content: "The work, as it actually looks: classrooms, circles, builds and application days.",
+        content:
+          "The work, as it actually looks: classrooms, circles, builds and application days.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -36,11 +38,15 @@ export const Route = createFileRoute("/gallery/")({
 });
 
 function Gallery() {
-  const themes = ["All", ...Array.from(new Set(GALLERY_EVENTS.map((e) => e.theme)))];
+  const themes = ["All", ...GALLERY_THEMES];
   const [theme, setTheme] = useState("All");
   const [year, setYear] = useState("All");
+  const [month, setMonth] = useState("All");
   const shown = GALLERY_EVENTS.filter(
-    (e) => (theme === "All" || e.theme === theme) && (year === "All" || String(e.year) === year),
+    (e) =>
+      (theme === "All" || e.theme === theme) &&
+      (year === "All" || String(e.year) === year) &&
+      (month === "All" || String(e.month) === month),
   );
   const chip = "rounded-sm border px-3 py-1.5 text-xs transition-colors";
 
@@ -78,6 +84,20 @@ function Gallery() {
                 ))}
               </SelectContent>
             </Select>
+            <span className="eyebrow text-cream/70">Month</span>
+            <Select value={month} onValueChange={setMonth}>
+              <SelectTrigger className="w-40 border-cream/25 bg-ink/40 text-cream">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All</SelectItem>
+                {MONTH_NAMES.map((name, i) => (
+                  <SelectItem key={name} value={String(i + 1)}>
+                    {name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <span className="eyebrow mr-1 text-cream/70">Theme</span>
@@ -108,15 +128,26 @@ function Gallery() {
                 params={{ eventId: e.id }}
                 className="lift group block overflow-hidden rounded-sm border border-border bg-card"
               >
-                <div className="overflow-hidden">
-                  <img
-                    src={galleryPhoto(e.photos[0].src)}
-                    alt={e.title}
-                    width={1200}
-                    height={900}
-                    loading="lazy"
-                    className="h-64 w-full object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
-                  />
+                <div className="relative overflow-hidden">
+                  {e.photos[0] ? (
+                    <img
+                      src={galleryPhoto(e.photos[0].src)}
+                      alt={e.title}
+                      width={1200}
+                      height={900}
+                      loading="lazy"
+                      className="h-64 w-full object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
+                    />
+                  ) : (
+                    <div aria-hidden="true" className="h-64 w-full bg-sand" />
+                  )}
+                  {e.programmeSlug && getInitiativeLogo(e.programmeSlug) ? (
+                    <img
+                      src={getInitiativeLogo(e.programmeSlug)}
+                      alt=""
+                      className="absolute right-3 top-3 size-11 rounded-sm border border-cream/40 bg-white object-contain p-1 shadow"
+                    />
+                  ) : null}
                 </div>
                 <div className="p-5">
                   <div className="flex items-baseline justify-between gap-3">
@@ -125,7 +156,9 @@ function Gallery() {
                   </div>
                   <h2 className="mt-2 font-display text-xl leading-tight">{e.title}</h2>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    {e.photos.length} photo{e.photos.length === 1 ? "" : "s"} · highlights film
+                    {e.photos.length > 0
+                      ? `${e.photos.length} photo${e.photos.length === 1 ? "" : "s"} · highlights film`
+                      : "Photographs coming soon"}
                   </p>
                 </div>
               </Link>

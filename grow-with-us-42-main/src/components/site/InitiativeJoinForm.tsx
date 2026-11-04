@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import type { ProgrammeBrand } from "@/lib/programme-brands";
 import { SITE } from "@/lib/site-content";
+import { submitFormToSupabase } from "@/lib/forms-client";
 
 const inputClass =
   "rounded-sm border border-black/15 bg-white/70 px-4 py-3 text-sm outline-none transition-colors focus:border-current";
@@ -12,15 +13,29 @@ export function InitiativeJoinForm({
   brand: ProgrammeBrand;
   programmeName: string;
 }) {
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
-  if (sent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("sending");
+    const formData = new FormData(e.currentTarget);
+    formData.set("form_type", "initiative_join");
+    formData.set("programme", programmeName);
+    try {
+      await submitFormToSupabase("initiative_join", formData);
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  if (status === "sent") {
     return (
       <div className="rounded-sm border p-6" style={{ borderColor: `${brand.accent}40` }}>
         <p className="font-display text-lg">Thank you — we have your details.</p>
         <p className="mt-3 text-sm leading-relaxed" style={{ color: `${brand.accent}` }}>
-          This form is not yet wired to our intake system. In the meantime, write to us and mention
-          "{programmeName}" — a person reads and answers every message.
+          A person reads and answers every message. If it's urgent, write to us and mention "
+          {programmeName}".
         </p>
         <a
           href={`mailto:${SITE.email}?subject=${encodeURIComponent(`${brand.cta.label}: ${programmeName}`)}`}
@@ -37,10 +52,7 @@ export function InitiativeJoinForm({
     <form
       className="grid gap-4 rounded-sm border p-6"
       style={{ borderColor: `${brand.accent}40`, backgroundColor: brand.tint }}
-      onSubmit={(e) => {
-        e.preventDefault();
-        setSent(true);
-      }}
+      onSubmit={handleSubmit}
     >
       <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: brand.accent }}>
         {brand.cta.label}
@@ -57,7 +69,13 @@ export function InitiativeJoinForm({
           <span className="text-xs font-semibold" style={{ color: brand.accent }}>
             Phone
           </span>
-          <input required type="tel" name="phone" className={inputClass} style={{ color: "#2E2419" }} />
+          <input
+            required
+            type="tel"
+            name="phone"
+            className={inputClass}
+            style={{ color: "#2E2419" }}
+          />
         </label>
       </div>
 
@@ -65,7 +83,13 @@ export function InitiativeJoinForm({
         <span className="text-xs font-semibold" style={{ color: brand.accent }}>
           Email
         </span>
-        <input required type="email" name="email" className={inputClass} style={{ color: "#2E2419" }} />
+        <input
+          required
+          type="email"
+          name="email"
+          className={inputClass}
+          style={{ color: "#2E2419" }}
+        />
       </label>
 
       {brand.joinField.options.length > 0 && (
@@ -73,7 +97,13 @@ export function InitiativeJoinForm({
           <span className="text-xs font-semibold" style={{ color: brand.accent }}>
             {brand.joinField.label}
           </span>
-          <select required name="detail" defaultValue="" className={inputClass} style={{ color: "#2E2419" }}>
+          <select
+            required
+            name="detail"
+            defaultValue=""
+            className={inputClass}
+            style={{ color: "#2E2419" }}
+          >
             <option value="" disabled>
               Choose one
             </option>
@@ -98,11 +128,24 @@ export function InitiativeJoinForm({
 
       <button
         type="submit"
-        className="mt-2 rounded-sm px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
+        disabled={status === "sending"}
+        className="mt-2 rounded-sm px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
         style={{ backgroundColor: brand.accent, color: brand.onAccent }}
       >
-        {brand.cta.label}
+        {status === "sending" ? "Sending…" : brand.cta.label}
       </button>
+      {status === "error" && (
+        <p className="text-sm" style={{ color: brand.accent }}>
+          Something went wrong. Please email us directly at{" "}
+          <a
+            href={`mailto:${SITE.email}?subject=${encodeURIComponent(`${brand.cta.label}: ${programmeName}`)}`}
+            className="underline"
+          >
+            {SITE.email}
+          </a>
+          .
+        </p>
+      )}
     </form>
   );
 }

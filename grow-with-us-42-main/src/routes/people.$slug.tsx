@@ -1,20 +1,26 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Reveal } from "@/components/site/Reveal";
-import { VideoFrame } from "@/components/site/VideoFrame";
 import { PageHero } from "@/components/site/PageHero";
-import { getPerson, PEOPLE, SITE } from "@/lib/site-content";
+import { SITE } from "@/lib/site-content";
 import { personPhoto } from "@/lib/people-photos";
+import { PersonAvatar } from "@/components/site/PersonAvatar";
+import teamFallback from "@/assets/team-meeting-2.jpg";
+import { getPublishedPeople } from "@/lib/site-content-db";
 
 export const Route = createFileRoute("/people/$slug")({
-  loader: ({ params }) => {
-    const person = getPerson(params.slug);
+  loader: async ({ params }) => {
+    const people = await getPublishedPeople();
+    const person = people.find((entry) => entry.slug === params.slug);
     if (!person) throw notFound();
-    return { person };
+    return { person, people };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [{ title: "Profile not found — SINGAWE Foundation" }, { name: "robots", content: "noindex" }],
+        meta: [
+          { title: "Profile not found — SINGAWE Foundation" },
+          { name: "robots", content: "noindex" },
+        ],
       };
     }
     const { person } = loaderData;
@@ -53,12 +59,15 @@ function PersonMissing() {
 }
 
 function PersonDetailPage() {
-  const { person } = Route.useLoaderData();
-  const others = PEOPLE.filter((p) => p.slug !== person.slug).slice(0, 4);
+  const { person, people } = Route.useLoaderData();
+  const others = people.filter((p) => p.slug !== person.slug).slice(0, 4);
 
   return (
     <>
-      <PageHero image={personPhoto(person.photo)} alt={person.name}>
+      <PageHero
+        image={person.photo ? personPhoto(person.photo) : teamFallback}
+        alt={person.photo ? person.name : "The SINGAWE team"}
+      >
         <Reveal>
           <Link to="/people" className="slash text-sm text-cream/70 hover:text-gold">
             Back to our people
@@ -66,11 +75,10 @@ function PersonDetailPage() {
         </Reveal>
         <div className="mt-10 grid gap-10 lg:grid-cols-[0.3fr_1fr] lg:items-start">
           <Reveal>
-            <img
-              src={personPhoto(person.photo)}
-              alt={person.name}
-              width={200}
-              height={200}
+            <PersonAvatar
+              photo={person.photo}
+              initials={person.initials}
+              name={person.name}
               className="size-32 rounded-full border-2 border-gold object-cover"
             />
           </Reveal>
@@ -82,13 +90,13 @@ function PersonDetailPage() {
               {person.name}
             </h1>
             <p className="mt-3 text-cream/80">{person.field}</p>
-            <p className="mt-2 text-sm text-cream/60">
-              In this role since <span className="text-gold">{person.joined}</span>
-            </p>
+            {person.joined ? (
+              <p className="mt-2 text-sm text-cream/60">
+                In this role since <span className="text-gold">{person.joined}</span>
+              </p>
+            ) : null}
             <div className="mt-8 h-px w-40 rule-draw bg-gold" />
-            <p className="mt-8 max-w-2xl text-lg leading-relaxed text-cream/85">
-              {person.brief}
-            </p>
+            <p className="mt-8 max-w-2xl text-lg leading-relaxed text-cream/85">{person.brief}</p>
           </Reveal>
         </div>
       </PageHero>
@@ -113,12 +121,22 @@ function PersonDetailPage() {
           </Reveal>
         ) : null}
 
-        <Reveal delay={160} className="mt-16">
-          <VideoFrame
-            label="Portrait film · space reserved"
-            caption="If this person chooses to record their story, it will live here."
-          />
-        </Reveal>
+        {person.links?.length ? (
+          <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
+            {person.links.map((link) => (
+              <a
+                key={link.label}
+                href={link.url}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="slash text-sm font-semibold transition-colors hover:text-clay"
+              >
+                {link.label} ↗
+              </a>
+            ))}
+          </div>
+        ) : null}
+
       </section>
 
       <section className="border-t border-border bg-sand">

@@ -21,7 +21,10 @@ export const Route = createFileRoute("/get-involved/guide")({
 function GuidePage() {
   return (
     <>
-      <PageHero image={mentorship} alt="A Guide and a Journeyer working through an application together">
+      <PageHero
+        image={mentorship}
+        alt="A Guide and a Journeyer working through an application together"
+      >
         <Reveal>
           <Link to="/get-involved" className="slash text-sm text-cream/70 hover:text-gold">
             Get Involved
@@ -32,8 +35,8 @@ function GuidePage() {
           </h1>
           <div className="mt-8 h-px w-40 rule-draw bg-gold" />
           <p className="mt-8 max-w-2xl text-lg leading-relaxed text-cream/80">
-            You have walked a path someone else is starting. Guides commit consistency, not
-            money — usually monthly contact across a programme cycle.
+            You have walked a path someone else is starting. Guides commit consistency, not money —
+            usually monthly contact across a programme cycle.
           </p>
         </Reveal>
       </PageHero>
@@ -45,9 +48,8 @@ function GuidePage() {
             Offer consistency, not money.
           </h2>
           <p className="mt-4 leading-relaxed text-muted-foreground">
-            Guides are screened before they are matched. We ask for your ID and CV as part of
-            that screening, and your date of birth to confirm you meet our minimum age
-            requirement.
+            Guides are screened before they are matched. We ask for your ID and CV as part of that
+            screening, and your date of birth to confirm you meet our minimum age requirement.
           </p>
         </Reveal>
         <Reveal delay={100} className="mt-10">
@@ -56,6 +58,7 @@ function GuidePage() {
             blurb="One structured hour a month, inside our safeguarding framework."
             submitLabel="Submit my application"
             requireCv
+            formType="intake_guide"
           />
         </Reveal>
       </section>
