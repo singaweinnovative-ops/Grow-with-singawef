@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
-import { OPPORTUNITY_HELP_FORMS, SITE } from "@/lib/site-content";
-import { submitFormToSupabase } from "@/lib/forms-client";
+import { useSiteContent } from "@/lib/site-content-context";
+import { FormSubmitError, submitFormToSupabase } from "@/lib/forms-client";
+import { FormGuard } from "@/components/site/FormGuard";
 import type { SiteOpportunity } from "@/lib/site-content-db";
 
 type Opportunity = SiteOpportunity;
@@ -53,7 +54,9 @@ const HELP_OPTIONS = [
 ];
 
 export function HelpApplyingForm({ opportunity }: { opportunity: Opportunity }) {
+  const { OPPORTUNITY_HELP_FORMS, SITE } = useSiteContent();
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
   const [helpWith, setHelpWith] = useState<string[]>([]);
   const config =
     OPPORTUNITY_HELP_FORMS[opportunity.category as keyof typeof OPPORTUNITY_HELP_FORMS];
@@ -68,7 +71,8 @@ export function HelpApplyingForm({ opportunity }: { opportunity: Opportunity }) 
     try {
       await submitFormToSupabase("help_applying", formData);
       setStatus("sent");
-    } catch {
+    } catch (err) {
+      setErrorDetail(err instanceof FormSubmitError ? err.message : null);
       setStatus("error");
     }
   }
@@ -166,6 +170,7 @@ export function HelpApplyingForm({ opportunity }: { opportunity: Opportunity }) 
         />
       </label>
 
+      <FormGuard />
       <button
         type="submit"
         disabled={status === "sending"}
@@ -175,7 +180,7 @@ export function HelpApplyingForm({ opportunity }: { opportunity: Opportunity }) 
       </button>
       {status === "error" && (
         <p className="text-sm text-destructive">
-          Something went wrong. Please email us directly at{" "}
+          {errorDetail ?? "Something went wrong."} Please email us directly at{" "}
           <a
             href={`mailto:${SITE.email}?subject=${encodeURIComponent(`Help applying: ${opportunity.title}`)}`}
             className="slash"

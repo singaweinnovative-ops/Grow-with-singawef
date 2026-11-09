@@ -7,7 +7,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import { SITE, FAQS } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
 import community from "@/assets/community.jpg";
 
 export const Route = createFileRoute("/faq")({
@@ -31,6 +31,7 @@ export const Route = createFileRoute("/faq")({
 });
 
 function Faq() {
+  const { FAQS, SITE } = useSiteContent();
   return (
     <>
       <PageHero image={community} alt="A SINGAWE Foundation community gathering">

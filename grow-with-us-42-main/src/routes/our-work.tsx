@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Reveal } from "@/components/site/Reveal";
 import { PageHero } from "@/components/site/PageHero";
-import { OUR_WORK_PILLARS } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
 import { galleryPhoto } from "@/lib/gallery-photos";
 
 export const Route = createFileRoute("/our-work")({
@@ -27,6 +27,7 @@ export const Route = createFileRoute("/our-work")({
 });
 
 function OurWork() {
+  const { OUR_WORK_PILLARS } = useSiteContent();
   return (
     <>
       <PageHero

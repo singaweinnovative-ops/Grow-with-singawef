@@ -2,9 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { Reveal } from "@/components/site/Reveal";
 import { PageHero } from "@/components/site/PageHero";
-import { SITE } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
 import { FORMSPREE_ENDPOINT } from "@/lib/env";
-import { submitFormToSupabase } from "@/lib/forms-client";
+import { FormSubmitError, submitFormToSupabase } from "@/lib/forms-client";
+import { FormGuard } from "@/components/site/FormGuard";
 import heroPortrait from "@/assets/hero-portrait.jpg";
 
 export const Route = createFileRoute("/contact")({
@@ -27,7 +28,9 @@ export const Route = createFileRoute("/contact")({
 });
 
 function Contact() {
+  const { SITE } = useSiteContent();
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -48,7 +51,8 @@ function Contact() {
       }
       setStatus("sent");
       form.reset();
-    } catch {
+    } catch (err) {
+      setErrorDetail(err instanceof FormSubmitError ? err.message : null);
       setStatus("error");
     }
   }
@@ -151,6 +155,7 @@ function Contact() {
               </label>
             </div>
 
+            <FormGuard />
             <button
               type="submit"
               disabled={status === "sending"}

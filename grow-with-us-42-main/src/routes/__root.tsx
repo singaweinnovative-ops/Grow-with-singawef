@@ -15,6 +15,14 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { CookieNotice } from "@/components/site/CookieNotice";
 import { ZaziChat } from "@/components/site/ZaziChat";
+import { Analytics } from "@/components/site/Analytics";
+import { SiteContentProvider } from "@/lib/site-content-context";
+import { loadSiteContent, primeSiteContent } from "@/lib/site-content-db";
+import { absoluteUrl } from "@/lib/site-url";
+
+const GOOGLE_SITE_VERIFICATION = import.meta.env["VITE_GOOGLE_SITE_VERIFICATION"] as
+  string | undefined;
+const SHARE_IMAGE = absoluteUrl("/og-image.jpg");
 
 function NotFoundComponent() {
   return (
@@ -77,6 +85,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  // Page text, news, programmes, gallery, press and resources — published
+  // from the management site, with the bundled content as fallback.
+  loader: () => loadSiteContent(),
+  staleTime: 60_000,
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -96,7 +108,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "We Are For You. Unlocking potential through mentorship, education and opportunity.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: SHARE_IMAGE },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      {
+        property: "og:image:alt",
+        content: "SINGAWE Foundation — Your Journey. Our Commitment.",
+      },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: SHARE_IMAGE },
+      ...(GOOGLE_SITE_VERIFICATION
+        ? [{ name: "google-site-verification", content: GOOGLE_SITE_VERIFICATION }]
+        : []),
     ],
     links: [
       {
@@ -118,6 +141,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@context": "https://schema.org",
           "@type": "NGO",
           name: "SINGAWE Foundation NPC",
+          url: absoluteUrl("/"),
+          logo: absoluteUrl("/favicon.png"),
           slogan: "Your Journey. Our Commitment.",
           areaServed: "South Africa",
         }),
@@ -147,19 +172,25 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const content = Route.useLoaderData();
+  // Lets client-side navigations reuse what the server already loaded.
+  if (content) primeSiteContent(content);
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col">
-        <Header />
-        <main className="flex-1">
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
-      <CookieNotice />
-      <ZaziChat />
+      <SiteContentProvider content={content}>
+        <div className="flex min-h-screen flex-col">
+          <Header />
+          <main className="flex-1">
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
+        <CookieNotice />
+        <ZaziChat />
+        <Analytics />
+      </SiteContentProvider>
     </QueryClientProvider>
   );
 }

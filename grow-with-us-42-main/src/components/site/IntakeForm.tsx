@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { BirthDetailsField } from "@/components/site/BirthDetailsField";
-import { SITE } from "@/lib/site-content";
-import { submitFormToSupabase } from "@/lib/forms-client";
+import { useSiteContent } from "@/lib/site-content-context";
+import { FormSubmitError, submitFormToSupabase } from "@/lib/forms-client";
+import { FormGuard } from "@/components/site/FormGuard";
+import { UPLOAD_RULES } from "@/lib/upload-rules";
 
 const inputClass =
   "rounded-sm border border-border bg-background px-4 py-3 text-base outline-none transition-colors focus:border-gold";
@@ -21,11 +23,13 @@ export function IntakeForm({
   requireCv?: boolean;
   formType: "intake_journeyer" | "intake_guide";
 }) {
+  const { SITE } = useSiteContent();
   const [age, setAge] = useState<number | null>(null);
   const [idFile, setIdFile] = useState<File | null>(null);
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [guardianConsent, setGuardianConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
 
   const isMinor = age !== null && age < 18;
 
@@ -37,7 +41,8 @@ export function IntakeForm({
     try {
       await submitFormToSupabase(formType, formData);
       setStatus("sent");
-    } catch {
+    } catch (err) {
+      setErrorDetail(err instanceof FormSubmitError ? err.message : null);
       setStatus("error");
     }
   }
@@ -75,10 +80,11 @@ export function IntakeForm({
             required
             type="file"
             name="idCopy"
-            accept="image/*,.pdf"
+            accept={UPLOAD_RULES.idCopy.accept}
             onChange={(e) => setIdFile(e.target.files?.[0] ?? null)}
             className={fileClass}
           />
+          <span className="text-xs text-muted-foreground">{UPLOAD_RULES.idCopy.hint}</span>
           {idFile ? (
             <span className="text-xs text-muted-foreground">Selected: {idFile.name}</span>
           ) : null}
@@ -91,10 +97,11 @@ export function IntakeForm({
               required
               type="file"
               name="cv"
-              accept=".pdf,.doc,.docx"
+              accept={UPLOAD_RULES.cv.accept}
               onChange={(e) => setCvFile(e.target.files?.[0] ?? null)}
               className={fileClass}
             />
+            <span className="text-xs text-muted-foreground">{UPLOAD_RULES.cv.hint}</span>
             {cvFile ? (
               <span className="text-xs text-muted-foreground">Selected: {cvFile.name}</span>
             ) : null}
@@ -153,6 +160,7 @@ export function IntakeForm({
         </label>
       </div>
 
+      <FormGuard />
       <button
         type="submit"
         disabled={(isMinor && !guardianConsent) || status === "sending"}
@@ -176,7 +184,7 @@ export function IntakeForm({
       )}
       {status === "error" && (
         <p className="mt-4 text-sm leading-relaxed text-destructive">
-          Something went wrong. Please email us directly at{" "}
+          {errorDetail ?? "Something went wrong."} Please email us directly at{" "}
           <a href={`mailto:${SITE.email}?subject=${encodeURIComponent(title)}`} className="slash">
             {SITE.email}
           </a>{" "}

@@ -12,6 +12,8 @@ const INITIATIVE_LOGOS: Record<string, string> = {
   mentored,
 };
 
-export function getInitiativeLogo(slug: string): string | undefined {
+/** A logo uploaded on the management site (`override`) wins over the bundled one. */
+export function getInitiativeLogo(slug: string, override?: string | null): string | undefined {
+  if (override && (/^https?:\/\//i.test(override) || override.startsWith("/"))) return override;
   return INITIATIVE_LOGOS[slug];
 }

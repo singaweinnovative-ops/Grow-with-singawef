@@ -1,11 +1,9 @@
 import {
-  ALL_PROGRAMMES,
-  FAQS,
-  GALLERY_EVENTS,
-  NEWS,
+  DEFAULT_SITE_CONTENT,
   OPPORTUNITIES,
   PEOPLE,
-  RESOURCES,
+  buildAllProgrammes,
+  type SiteContent,
 } from "@/lib/site-content";
 import { isOpportunityActive } from "@/lib/opportunity-dates";
 
@@ -52,7 +50,10 @@ const PAGES: SearchItem[] = [
 export function getSearchGroups(
   peopleSource: SearchPerson[] = PEOPLE,
   opportunitySource: SearchOpportunity[] = OPPORTUNITIES,
+  content: SiteContent = DEFAULT_SITE_CONTENT,
 ): SearchGroup[] {
+  const { FAQS, GALLERY_EVENTS, NEWS, RESOURCES } = content;
+  const ALL_PROGRAMMES = buildAllProgrammes(content.PROGRAMMES, content.INITIATIVES);
   const programmes = ALL_PROGRAMMES.filter((p) => p.family === "Programme").map((p) => ({
     id: `programme-${p.slug}`,
     title: p.name,
@@ -142,12 +143,13 @@ export function searchItems(
   query: string,
   peopleSource: SearchPerson[] = PEOPLE,
   opportunitySource: SearchOpportunity[] = OPPORTUNITIES,
+  content: SiteContent = DEFAULT_SITE_CONTENT,
 ): SearchResult[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
 
   const results: SearchResult[] = [];
-  for (const group of getSearchGroups(peopleSource, opportunitySource)) {
+  for (const group of getSearchGroups(peopleSource, opportunitySource, content)) {
     for (const item of group.items) {
       const haystack = [item.title, item.subtitle, item.keywords]
         .filter(Boolean)

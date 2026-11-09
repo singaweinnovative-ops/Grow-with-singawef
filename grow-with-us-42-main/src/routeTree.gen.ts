@@ -18,9 +18,12 @@ import { Route as OpportunitiesRouteImport } from './routes/opportunities'
 import { Route as OurWorkRouteImport } from './routes/our-work'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResourcesRouteImport } from './routes/resources'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as WhoWeServeRouteImport } from './routes/who-we-serve'
+import { Route as ApiSubmitRouteImport } from './routes/api/submit'
 import { Route as ApiZaziRouteImport } from './routes/api/zazi'
 import { Route as GalleryIndexRouteImport } from './routes/gallery.index'
 import { Route as GalleryEventIdRouteImport } from './routes/gallery.$eventId'
@@ -80,6 +83,11 @@ const ResourcesRoute = ResourcesRouteImport.update({
   path: '/resources',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SafetyRoute = SafetyRouteImport.update({
   id: '/safety',
   path: '/safety',
@@ -90,9 +98,19 @@ const SearchRoute = SearchRouteImport.update({
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WhoWeServeRoute = WhoWeServeRouteImport.update({
   id: '/who-we-serve',
   path: '/who-we-serve',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSubmitRoute = ApiSubmitRouteImport.update({
+  id: '/api/submit',
+  path: '/api/submit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiZaziRoute = ApiZaziRouteImport.update({
@@ -171,9 +189,12 @@ export interface FileRoutesByFullPath {
   '/our-work': typeof OurWorkRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/safety': typeof SafetyRoute
   '/search': typeof SearchRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/who-we-serve': typeof WhoWeServeRoute
+  '/api/submit': typeof ApiSubmitRoute
   '/api/zazi': typeof ApiZaziRoute
   '/gallery/$eventId': typeof GalleryEventIdRoute
   '/get-involved/companion': typeof GetInvolvedCompanionRoute
@@ -198,9 +219,12 @@ export interface FileRoutesByTo {
   '/our-work': typeof OurWorkRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/safety': typeof SafetyRoute
   '/search': typeof SearchRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/who-we-serve': typeof WhoWeServeRoute
+  '/api/submit': typeof ApiSubmitRoute
   '/api/zazi': typeof ApiZaziRoute
   '/gallery/$eventId': typeof GalleryEventIdRoute
   '/get-involved/companion': typeof GetInvolvedCompanionRoute
@@ -226,9 +250,12 @@ export interface FileRoutesById {
   '/our-work': typeof OurWorkRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/safety': typeof SafetyRoute
   '/search': typeof SearchRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/who-we-serve': typeof WhoWeServeRoute
+  '/api/submit': typeof ApiSubmitRoute
   '/api/zazi': typeof ApiZaziRoute
   '/gallery/$eventId': typeof GalleryEventIdRoute
   '/get-involved/companion': typeof GetInvolvedCompanionRoute
@@ -255,9 +282,12 @@ export interface FileRouteTypes {
     | '/our-work'
     | '/privacy'
     | '/resources'
+    | '/robots.txt'
     | '/safety'
     | '/search'
+    | '/sitemap.xml'
     | '/who-we-serve'
+    | '/api/submit'
     | '/api/zazi'
     | '/gallery/$eventId'
     | '/get-involved/companion'
@@ -282,9 +312,12 @@ export interface FileRouteTypes {
     | '/our-work'
     | '/privacy'
     | '/resources'
+    | '/robots.txt'
     | '/safety'
     | '/search'
+    | '/sitemap.xml'
     | '/who-we-serve'
+    | '/api/submit'
     | '/api/zazi'
     | '/gallery/$eventId'
     | '/get-involved/companion'
@@ -309,9 +342,12 @@ export interface FileRouteTypes {
     | '/our-work'
     | '/privacy'
     | '/resources'
+    | '/robots.txt'
     | '/safety'
     | '/search'
+    | '/sitemap.xml'
     | '/who-we-serve'
+    | '/api/submit'
     | '/api/zazi'
     | '/gallery/$eventId'
     | '/get-involved/companion'
@@ -337,9 +373,12 @@ export interface RootRouteChildren {
   OurWorkRoute: typeof OurWorkRoute
   PrivacyRoute: typeof PrivacyRoute
   ResourcesRoute: typeof ResourcesRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
   SafetyRoute: typeof SafetyRoute
   SearchRoute: typeof SearchRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   WhoWeServeRoute: typeof WhoWeServeRoute
+  ApiSubmitRoute: typeof ApiSubmitRoute
   ApiZaziRoute: typeof ApiZaziRoute
   GalleryEventIdRoute: typeof GalleryEventIdRoute
   GetInvolvedCompanionRoute: typeof GetInvolvedCompanionRoute
@@ -420,6 +459,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResourcesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/safety': {
       id: '/safety'
       path: '/safety'
@@ -434,11 +480,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/who-we-serve': {
       id: '/who-we-serve'
       path: '/who-we-serve'
       fullPath: '/who-we-serve'
       preLoaderRoute: typeof WhoWeServeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/submit': {
+      id: '/api/submit'
+      path: '/api/submit'
+      fullPath: '/api/submit'
+      preLoaderRoute: typeof ApiSubmitRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/zazi': {
@@ -545,9 +605,12 @@ const rootRouteChildren: RootRouteChildren = {
   OurWorkRoute: OurWorkRoute,
   PrivacyRoute: PrivacyRoute,
   ResourcesRoute: ResourcesRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
   SafetyRoute: SafetyRoute,
   SearchRoute: SearchRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   WhoWeServeRoute: WhoWeServeRoute,
+  ApiSubmitRoute: ApiSubmitRoute,
   ApiZaziRoute: ApiZaziRoute,
   GalleryEventIdRoute: GalleryEventIdRoute,
   GetInvolvedCompanionRoute: GetInvolvedCompanionRoute,

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { MessageCircle, Send, X } from "lucide-react";
-import { SITE } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -22,7 +22,8 @@ async function streamZaziReply(
   });
 
   if (!response.ok || !response.body) {
-    onError("Zazi is having trouble right now — please try again in a moment.");
+    const body = (await response.json().catch(() => null)) as { error?: string } | null;
+    onError(body?.error ?? "Zazi is having trouble right now — please try again in a moment.");
     return;
   }
 
@@ -56,6 +57,7 @@ async function streamZaziReply(
 }
 
 export function ZaziChat() {
+  const { SITE } = useSiteContent();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([GREETING]);
   const [input, setInput] = useState("");

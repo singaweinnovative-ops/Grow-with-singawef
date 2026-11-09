@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Reveal } from "@/components/site/Reveal";
 import { PageHero } from "@/components/site/PageHero";
-import { FAQS, SITE } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
 import mentorship from "@/assets/mentorship.jpg";
 import heroStudent from "@/assets/hero-student.jpg";
 import community from "@/assets/community.jpg";
@@ -60,6 +60,7 @@ const PATHS = [
 ];
 
 function GetInvolved() {
+  const { FAQS, SITE } = useSiteContent();
   return (
     <>
       <PageHero image={mentorship} alt="A Guide and a Journeyer working through an application together">

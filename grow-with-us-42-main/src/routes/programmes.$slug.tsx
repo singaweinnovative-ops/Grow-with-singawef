@@ -1,16 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { Reveal } from "@/components/site/Reveal";
-import {
-  ALL_PROGRAMMES,
-  CAREER_YUM,
-  GALLERY_EVENTS,
-  MONTH_NAMES,
-  SINGAWEB_SCHOOLS,
-  TACA_MATRIC_SYSTEM,
-  getProgramme,
-  SITE,
-} from "@/lib/site-content";
+import { MONTH_NAMES, withDerived } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
+import { loadSiteContent } from "@/lib/site-content-db";
 import { getBrand } from "@/lib/programme-brands";
 import { getProgrammeImage } from "@/lib/programme-images";
 import { ProgrammeNav } from "@/components/site/ProgrammeNav";
@@ -35,8 +28,8 @@ import {
 import { galleryPhoto } from "@/lib/gallery-photos";
 
 export const Route = createFileRoute("/programmes/$slug")({
-  loader: ({ params }) => {
-    const programme = getProgramme(params.slug);
+  loader: async ({ params }) => {
+    const programme = withDerived(await loadSiteContent()).getProgramme(params.slug);
     if (!programme) throw notFound();
     return { programme };
   },
@@ -85,10 +78,11 @@ function ProgrammeMissing() {
 }
 
 function ProgrammeDetailPage() {
+  const { ALL_PROGRAMMES, CAREER_YUM, GALLERY_EVENTS, SINGAWEB_SCHOOLS, SITE, TACA_MATRIC_SYSTEM } = useSiteContent();
   const { programme: p } = Route.useLoaderData();
   const others = ALL_PROGRAMMES.filter((x) => x.slug !== p.slug).slice(0, 4);
-  const brand = getBrand(p.slug, p.name, p.family);
-  const dossier = getDossier(p.slug);
+  const brand = getBrand(p.slug, p.name, p.family, p.brand);
+  const dossier = getDossier(p.slug, p.dossier);
   const [joinOpen, setJoinOpen] = useState(false);
   const [collabOpen, setCollabOpen] = useState(false);
   const [openSchoolId, setOpenSchoolId] = useState<string | null>(null);
@@ -123,6 +117,7 @@ function ProgrammeDetailPage() {
         name={p.name}
         family={p.family}
         slug={p.slug}
+        logo={p.logo}
         onSectionClick={(id) => {
           if (id === "gallery") setGalleryRevealedFor(p.slug);
         }}
@@ -133,7 +128,7 @@ function ProgrammeDetailPage() {
         style={{ borderColor: `${brand.accent}26` }}
       >
         <img
-          src={getProgrammeImage(p.slug)}
+          src={getProgrammeImage(p.slug, p.image)}
           alt=""
           className="absolute inset-0 h-full w-full object-cover"
         />
@@ -375,7 +370,7 @@ function ProgrammeDetailPage() {
           </Reveal>
           <Reveal delay={120}>
             <img
-              src={getProgrammeImage(p.slug)}
+              src={getProgrammeImage(p.slug, p.image)}
               alt={
                 p.slug === "taca"
                   ? "TACA learners exploring education and career opportunities"

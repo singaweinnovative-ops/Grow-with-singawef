@@ -9,7 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LEXICON, PERSON_CIRCLES } from "@/lib/site-content";
+import { PERSON_CIRCLES } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
 import { PersonAvatar } from "@/components/site/PersonAvatar";
 import { getPublishedPeople } from "@/lib/site-content-db";
 import community from "@/assets/community.jpg";
@@ -39,6 +40,7 @@ export const Route = createFileRoute("/people/")({
 const CHIP = "rounded-sm border px-3 py-1.5 text-xs transition-colors";
 
 function People() {
+  const { LEXICON } = useSiteContent();
   const people = Route.useLoaderData();
   const [role, setRole] = useState<string>("All");
   const [year, setYear] = useState<string>("All");

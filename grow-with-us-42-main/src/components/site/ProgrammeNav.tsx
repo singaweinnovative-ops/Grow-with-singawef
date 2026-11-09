@@ -8,11 +8,19 @@ type Props = {
   name: string;
   family: string;
   slug: string;
+  logo?: string | undefined;
   onSectionClick?: (id: string) => void;
 };
 
-export function ProgrammeNav({ brand, name, family, slug, onSectionClick }: Props) {
-  const logo = getInitiativeLogo(slug);
+export function ProgrammeNav({
+  brand,
+  name,
+  family,
+  slug,
+  logo: logoOverride,
+  onSectionClick,
+}: Props) {
+  const logo = getInitiativeLogo(slug, logoOverride);
   const [active, setActive] = useState(brand.sections[0]?.id ?? "");
 
   useEffect(() => {

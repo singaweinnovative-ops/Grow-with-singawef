@@ -304,10 +304,7 @@ export const PROGRAMME_DOSSIERS: Record<string, ProgrammeDossier> = {
       { value: "5", label: "2026 schools in Loskop" },
       { value: "3rd", label: "Consecutive TACA Week in 2026" },
     ],
-    allies: [
-      CORE_ALLY,
-      OPEN_SEAT,
-    ],
+    allies: [CORE_ALLY, OPEN_SEAT],
     walk: [
       {
         step: "01",
@@ -609,8 +606,25 @@ const FRAMEWORK_WALK_STEPS: Record<string, ProgrammeWalkStep[]> = {
   ],
 };
 
-export function getDossier(slug: string): ProgrammeDossier {
+/**
+ * The programme page's dossier. `override` is what the management site saved
+ * in site_programmes.dossier: any field it sets (vision, team, stats, …)
+ * replaces the built-in one; empty fields keep the built-in value.
+ */
+export function getDossier(slug: string, override?: Partial<ProgrammeDossier>): ProgrammeDossier {
   const base = PROGRAMME_DOSSIERS[slug] ?? DEFAULT_DOSSIER;
   const walk = FRAMEWORK_WALK_STEPS[slug] ?? base.walk;
-  return { ...base, walk };
+  const merged: ProgrammeDossier = { ...base, walk };
+  if (!override) return merged;
+  for (const [key, value] of Object.entries(override) as [keyof ProgrammeDossier, unknown][]) {
+    const empty =
+      value === null ||
+      value === undefined ||
+      value === "" ||
+      (Array.isArray(value) && value.length === 0);
+    if (!empty && typeof value === typeof merged[key]) {
+      (merged as Record<string, unknown>)[key] = value;
+    }
+  }
+  return merged;
 }

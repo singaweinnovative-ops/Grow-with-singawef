@@ -1,19 +1,12 @@
-import {
-  CAREER_YUM,
-  FAQS,
-  INITIATIVES,
-  PROGRAMMES,
-  RESOURCES,
-  SINGAWEB_SCHOOLS,
-  SITE,
-} from "@/lib/site-content";
+import { DEFAULT_SITE_CONTENT, type SiteContent } from "@/lib/site-content";
 
 /**
- * Static system prompt for Zazi, the SINGAWE Foundation assistant. Built
- * once from the site's own content so answers stay grounded in what the
- * site actually says, rather than invented facts.
+ * System prompt for Zazi, the SINGAWE Foundation assistant. Built from the
+ * site's own published content (the same data the pages render) so answers
+ * stay grounded in what the site actually says, rather than invented facts.
  */
-export function buildZaziSystemPrompt(): string {
+export function buildZaziSystemPrompt(content: SiteContent = DEFAULT_SITE_CONTENT): string {
+  const { CAREER_YUM, FAQS, INITIATIVES, PROGRAMMES, RESOURCES, SINGAWEB_SCHOOLS, SITE } = content;
   const lines: string[] = [];
 
   lines.push(

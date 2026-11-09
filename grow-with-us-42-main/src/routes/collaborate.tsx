@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { EmbeddedForm } from "@/components/site/EmbeddedForm";
 import { PartnerMarquee } from "@/components/site/PartnerMarquee";
 import { Reveal } from "@/components/site/Reveal";
-import { COLLAB_CREED, FOOTPRINT, MOVEMENTS, PRINCIPLES } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
 import community from "@/assets/community.jpg";
 
 export const Route = createFileRoute("/collaborate")({
@@ -28,6 +28,7 @@ export const Route = createFileRoute("/collaborate")({
 });
 
 function Collaborate() {
+  const { COLLAB_CREED, FOOTPRINT, MOVEMENTS, PRINCIPLES } = useSiteContent();
   return (
     <>
       <section className="mx-auto max-w-7xl px-6 pt-16 pb-16 lg:px-10 lg:pt-24">

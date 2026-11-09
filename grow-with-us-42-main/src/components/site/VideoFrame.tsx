@@ -1,9 +1,22 @@
-import { useState } from "react";
+import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
+
+/** Visitors who asked their device for less motion or less data use. */
+function prefersNoAutoplay(): boolean {
+  const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
+    ?.saveData;
+  return Boolean(reducedMotion || saveData);
+}
 
 /**
  * Plays `videoSrc` when given (a real, functional video with controls).
  * Without one, shows an honest "reserved" placeholder — never a fake player.
+ *
+ * The video autoplays muted once it scrolls into view and pauses when it
+ * leaves, so it only downloads for visitors who actually reach it. Anyone
+ * who turns the sound on or presses pause stays in control. Reduced-motion
+ * and data-saver visitors get the play button instead of autoplay.
  */
 export function VideoFrame({
   label = "Video coming soon",
@@ -20,7 +33,33 @@ export function VideoFrame({
   videoSrc?: string;
   poster?: string;
 }) {
-  const [videoFrameReady, setVideoFrameReady] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const pausedByVisitor = useRef(false);
+  const autoPausing = useRef(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || prefersNoAutoplay() || !("IntersectionObserver" in window)) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry) return;
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          if (!pausedByVisitor.current && video.paused) {
+            video.muted = true;
+            // Browsers may still refuse; the controls remain available.
+            void video.play().catch(() => {});
+          }
+        } else if (!video.paused) {
+          autoPausing.current = true;
+          video.pause();
+        }
+      },
+      { threshold: [0, 0.5] },
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, [videoSrc]);
 
   if (videoSrc) {
     return (
@@ -30,30 +69,25 @@ export function VideoFrame({
           className="group relative w-full overflow-hidden rounded-sm border border-border bg-ink"
         >
           <video
+            ref={videoRef}
             src={videoSrc}
             poster={poster}
             controls
-            autoPlay
             muted
             playsInline
-            preload="metadata"
-            onTimeUpdate={(event) => {
-              if (event.currentTarget.currentTime >= 0.8 && event.currentTarget.videoWidth > 0) {
-                setVideoFrameReady(true);
-              }
+            preload="none"
+            onPause={(e) => {
+              // Pauses from scrolling away are automatic; any other pause is the visitor's choice.
+              if (autoPausing.current) autoPausing.current = false;
+              else if (!e.currentTarget.ended) pausedByVisitor.current = true;
             }}
-            onError={() => setVideoFrameReady(false)}
+            onPlay={() => {
+              pausedByVisitor.current = false;
+            }}
             className="absolute inset-0 h-full w-full object-cover"
           >
             Your browser does not support the video tag.
           </video>
-          {poster && !videoFrameReady ? (
-            <img
-              src={poster}
-              alt=""
-              className="pointer-events-none absolute inset-0 z-10 h-full w-full object-cover"
-            />
-          ) : null}
         </div>
         {caption ? (
           <figcaption className="mt-3 text-sm text-muted-foreground">{caption}</figcaption>

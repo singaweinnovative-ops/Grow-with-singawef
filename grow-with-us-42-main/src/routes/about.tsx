@@ -2,11 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Reveal } from "@/components/site/Reveal";
 import { VideoFrame } from "@/components/site/VideoFrame";
 import { PageHero } from "@/components/site/PageHero";
-import { PRINCIPLES, VALUES } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
 import { getPublishedPeople } from "@/lib/site-content-db";
 import { galleryPhoto } from "@/lib/gallery-photos";
 import heroPortrait from "@/assets/hero-portrait.jpg";
-import singaweIntro from "@/assets/singawe-f-intro-720p.mp4";
+import singaweIntro from "@/assets/singawe-f-intro-540p.mp4";
 import introPoster from "@/assets/singawe-f-intro-poster.jpg";
 
 export const Route = createFileRoute("/about")({
@@ -33,6 +33,7 @@ export const Route = createFileRoute("/about")({
 });
 
 function About() {
+  const { MEDIA, PRINCIPLES, VALUES } = useSiteContent();
   const { olwethu } = Route.useLoaderData();
   return (
     <>
@@ -265,8 +266,8 @@ function About() {
             <VideoFrame
               label="SINGAWE Foundation"
               caption="Our introduction, told by the people who make the work happen."
-              videoSrc={singaweIntro}
-              poster={introPoster}
+              videoSrc={MEDIA.introVideoUrl ?? singaweIntro}
+              poster={MEDIA.introPosterUrl ?? introPoster}
             />
           </Reveal>
         </div>

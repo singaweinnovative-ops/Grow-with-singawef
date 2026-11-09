@@ -145,6 +145,16 @@ export const GALLERY_PHOTOS: Record<string, string> = {
 
 export const TACA_FILM_VIDEO = tacaFilm;
 
-export function galleryPhoto(key: string) {
-  return GALLERY_PHOTOS[key] ?? hero;
+/** True for a full URL or site-root path, e.g. a Supabase `site-content` image. */
+export function isMediaUrl(value: string | null | undefined): value is string {
+  return !!value && (/^https?:\/\//i.test(value) || value.startsWith("/"));
+}
+
+/**
+ * Resolves a photo reference from content: a bundled photo key (see
+ * GALLERY_PHOTOS above) or a URL uploaded through the management site.
+ */
+export function galleryPhoto(key: string | null | undefined) {
+  if (isMediaUrl(key)) return key;
+  return (key && GALLERY_PHOTOS[key]) || hero;
 }

@@ -1,27 +1,22 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-
-const STORAGE_KEY = "singawe-cookie-consent";
+import {
+  onConsentSettingsOpen,
+  readConsent,
+  writeConsent,
+  type ConsentChoice,
+} from "@/lib/consent";
 
 export function CookieNotice() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    try {
-      if (!localStorage.getItem(STORAGE_KEY)) {
-        setVisible(true);
-      }
-    } catch {
-      setVisible(true);
-    }
+    if (!readConsent()) setVisible(true);
+    return onConsentSettingsOpen(() => setVisible(true));
   }, []);
 
-  const dismiss = (value: "accepted" | "essential-only") => {
-    try {
-      localStorage.setItem(STORAGE_KEY, value);
-    } catch {
-      // ignore — storage may be unavailable
-    }
+  const dismiss = (value: ConsentChoice) => {
+    writeConsent(value);
     setVisible(false);
   };
 
@@ -36,8 +31,9 @@ export function CookieNotice() {
     >
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between lg:px-10">
         <p className="max-w-2xl text-sm leading-relaxed text-cream/75">
-          We use a small number of cookies to keep this site working well and to understand how it
-          is used. No personal data is sold, ever. Read our{" "}
+          We use essential storage to keep this site working. With your permission we also use
+          Google Analytics cookies to understand how the site is used. No personal data is sold,
+          ever. Read our{" "}
           <Link to="/privacy" className="text-gold underline hover:text-gold-soft">
             Privacy Policy
           </Link>{" "}

@@ -10,7 +10,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { RESOURCES, type Resource } from "@/lib/site-content";
+import { type Resource } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
+import { canPreview, downloadUrl, fileKind } from "@/lib/file-links";
 import mentorship from "@/assets/mentorship.jpg";
 
 export const Route = createFileRoute("/resources")({
@@ -25,7 +27,8 @@ export const Route = createFileRoute("/resources")({
       { property: "og:title", content: "SINGAWE Foundation Resources" },
       {
         property: "og:description",
-        content: "Every guide and policy document in one library — download it, or read it right here.",
+        content:
+          "Every guide and policy document in one library — download it, or read it right here.",
       },
       { property: "og:type", content: "website" },
     ],
@@ -36,6 +39,7 @@ export const Route = createFileRoute("/resources")({
 const chip = "rounded-sm border px-3 py-1.5 text-xs transition-colors";
 
 function Resources() {
+  const { RESOURCES } = useSiteContent();
   const categories = ["All", ...Array.from(new Set(RESOURCES.map((r) => r.category)))];
   const [active, setActive] = useState("All");
   const [viewing, setViewing] = useState<Resource | null>(null);
@@ -83,23 +87,27 @@ function Resources() {
                   <span className="flex size-11 shrink-0 items-center justify-center rounded-sm bg-gold-soft/60 text-clay">
                     <FileText className="size-5" />
                   </span>
-                  <span className="eyebrow text-gold">{r.category} · PDF</span>
+                  <span className="eyebrow text-gold">
+                    {r.category} · {fileKind(r.file)}
+                  </span>
                 </div>
                 <h2 className="mt-5 font-display text-xl leading-tight">{r.title}</h2>
                 <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
                   {r.description}
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setViewing(r)}
-                    className="inline-flex items-center gap-1.5 rounded-sm border border-border px-4 py-2 text-xs font-semibold transition-colors hover:border-gold hover:text-clay"
-                  >
-                    <Eye className="size-3.5" />
-                    View
-                  </button>
+                  {canPreview(r.file) ? (
+                    <button
+                      type="button"
+                      onClick={() => setViewing(r)}
+                      className="inline-flex items-center gap-1.5 rounded-sm border border-border px-4 py-2 text-xs font-semibold transition-colors hover:border-gold hover:text-clay"
+                    >
+                      <Eye className="size-3.5" />
+                      View
+                    </button>
+                  ) : null}
                   <a
-                    href={r.file}
+                    href={downloadUrl(r.file)}
                     download
                     className="inline-flex items-center gap-1.5 rounded-sm bg-ink px-4 py-2 text-xs font-semibold text-cream transition-colors hover:bg-clay"
                   >
@@ -132,7 +140,7 @@ function Resources() {
                 className="mt-2 w-full flex-1 rounded-sm border border-border"
               >
                 Your browser cannot preview this PDF —{" "}
-                <a href={viewing.file} download>
+                <a href={downloadUrl(viewing.file)} download>
                   download it instead
                 </a>
                 .

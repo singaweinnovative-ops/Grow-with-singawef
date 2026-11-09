@@ -5,6 +5,7 @@ import { Reveal } from "@/components/site/Reveal";
 import { PageHero } from "@/components/site/PageHero";
 import { searchItems, type SearchResult } from "@/lib/search-index";
 import { getPublishedOpportunities, getPublishedPeople } from "@/lib/site-content-db";
+import { useSiteContent } from "@/lib/site-content-context";
 import community from "@/assets/community.jpg";
 
 const searchSchema = z.object({
@@ -13,10 +14,13 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/search")({
   validateSearch: searchSchema,
-  loader: async () => ({
-    people: await getPublishedPeople(),
-    opportunities: await getPublishedOpportunities(),
-  }),
+  loader: async () => {
+    const [people, opportunities] = await Promise.all([
+      getPublishedPeople(),
+      getPublishedOpportunities(),
+    ]);
+    return { people, opportunities };
+  },
   head: () => ({
     meta: [{ title: "Search — SINGAWE Foundation" }, { name: "robots", content: "noindex" }],
   }),
@@ -28,7 +32,8 @@ function SearchPage() {
   const navigate = useNavigate({ from: Route.fullPath });
   const { people, opportunities } = Route.useLoaderData();
   const [value, setValue] = useState(q);
-  const results = searchItems(q, people, opportunities);
+  const content = useSiteContent();
+  const results = searchItems(q, people, opportunities, content);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();

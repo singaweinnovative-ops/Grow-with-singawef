@@ -1,19 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Reveal } from "@/components/site/Reveal";
 import { VideoFrame } from "@/components/site/VideoFrame";
-import singaweIntro from "@/assets/singawe-f-intro-720p.mp4";
+import singaweIntro from "@/assets/singawe-f-intro-540p.mp4";
 import introPoster from "@/assets/singawe-f-intro-poster.jpg";
 import { OpportunityCarousel } from "@/components/site/OpportunityCarousel";
 import { PartnerMarquee } from "@/components/site/PartnerMarquee";
-import {
-  INITIATIVES,
-  JOURNEY_STEPS,
-  LEARNING_PATHWAYS,
-  PROCESS_STEPS,
-  PROGRAMMES,
-  SITE,
-  WALK_STAGES,
-} from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
 import { galleryPhoto } from "@/lib/gallery-photos";
 import { getPublishedOpportunities } from "@/lib/site-content-db";
 import heroStudent from "@/assets/hero-student.jpg";
@@ -41,6 +33,16 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const {
+    INITIATIVES,
+    JOURNEY_STEPS,
+    LEARNING_PATHWAYS,
+    MEDIA,
+    PROCESS_STEPS,
+    PROGRAMMES,
+    SITE,
+    WALK_STAGES,
+  } = useSiteContent();
   const opportunities = Route.useLoaderData();
   return (
     <>
@@ -209,8 +211,8 @@ function Home() {
             <VideoFrame
               label="In Their Words"
               caption="The SINGAWE Foundation, in the words of the people who walk it."
-              videoSrc={singaweIntro}
-              poster={introPoster}
+              videoSrc={MEDIA.introVideoUrl ?? singaweIntro}
+              poster={MEDIA.introPosterUrl ?? introPoster}
             />
           </Reveal>
         </div>

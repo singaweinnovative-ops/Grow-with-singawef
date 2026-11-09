@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { EmbeddedForm } from "@/components/site/EmbeddedForm";
 import { Reveal } from "@/components/site/Reveal";
 import { PageHero } from "@/components/site/PageHero";
-import { MEDIA_CONTACT, NEWS, PRESS } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
+import { downloadUrl } from "@/lib/file-links";
 import community from "@/assets/community.jpg";
 import steam from "@/assets/steam.jpg";
 
@@ -31,6 +32,7 @@ const fmt = (d: string) =>
   new Date(d).toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" });
 
 function News() {
+  const { MEDIA_CONTACT, NEWS, PRESS } = useSiteContent();
   const sorted = [...NEWS].sort((a, b) => (a.date < b.date ? 1 : -1));
   const [lead, ...rest] = sorted;
 
@@ -124,7 +126,7 @@ function News() {
                   </div>
                   {p.file ? (
                     <a
-                      href={p.file}
+                      href={downloadUrl(p.file)}
                       download
                       className="slash text-sm font-semibold text-gold md:text-right"
                     >
@@ -149,10 +151,6 @@ function News() {
                 <a href={`mailto:${MEDIA_CONTACT.email}`} className="text-gold hover:underline">
                   {MEDIA_CONTACT.email}
                 </a>
-              </p>
-              <p className="mt-8 text-xs leading-relaxed text-cream/40">
-                Admin note: add a press release by dropping the PDF into public/press/ and adding an
-                entry to PRESS in src/lib/site-content.ts.
               </p>
             </Reveal>
             <Reveal delay={120}>

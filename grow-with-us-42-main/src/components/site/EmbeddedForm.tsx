@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from "react";
-import { FORMS, SITE } from "@/lib/site-content";
-import { submitFormToSupabase } from "@/lib/forms-client";
+import { useSiteContent } from "@/lib/site-content-context";
+import type { SiteContent } from "@/lib/site-content";
+import { FormSubmitError, submitFormToSupabase } from "@/lib/forms-client";
+import { FormGuard } from "@/components/site/FormGuard";
 import { cn } from "@/lib/utils";
 
-type FormKey = keyof typeof FORMS;
+type FormKey = keyof SiteContent["FORMS"];
 
 export function EmbeddedForm({
   form,
@@ -14,9 +16,11 @@ export function EmbeddedForm({
   className?: string;
   tone?: "light" | "dark";
 }) {
+  const { FORMS, SITE } = useSiteContent();
   const config = FORMS[form];
   const dark = tone === "dark";
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -29,7 +33,8 @@ export function EmbeddedForm({
       await submitFormToSupabase(form === "newsTip" ? "news_tip" : form, formData);
       setStatus("sent");
       formElement.reset();
-    } catch {
+    } catch (err) {
+      setErrorDetail(err instanceof FormSubmitError ? err.message : null);
       setStatus("error");
     }
   }
@@ -90,6 +95,7 @@ export function EmbeddedForm({
             className="resize-y rounded-sm border border-border bg-background px-4 py-3 text-base text-foreground outline-none transition-colors focus:border-gold"
           />
         </label>
+        <FormGuard />
         <button
           type="submit"
           disabled={status === "sending"}
@@ -104,7 +110,7 @@ export function EmbeddedForm({
         ) : null}
         {status === "error" ? (
           <p role="alert" className="text-sm text-destructive">
-            Something went wrong. Please email{" "}
+            {errorDetail ?? "Something went wrong."} Please email{" "}
             <a href={`mailto:${SITE.email}`} className="underline">
               {SITE.email}
             </a>

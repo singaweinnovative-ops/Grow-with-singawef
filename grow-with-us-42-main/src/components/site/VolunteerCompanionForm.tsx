@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
-import { SITE } from "@/lib/site-content";
-import { submitFormToSupabase } from "@/lib/forms-client";
+import { useSiteContent } from "@/lib/site-content-context";
+import { FormSubmitError, submitFormToSupabase } from "@/lib/forms-client";
+import { FormGuard } from "@/components/site/FormGuard";
 
 const inputClass =
   "rounded-sm border border-border bg-background px-4 py-3 text-base outline-none transition-colors focus:border-gold";
@@ -15,9 +16,11 @@ const HELP_OPTIONS = [
 ];
 
 export function VolunteerCompanionForm() {
+  const { SITE } = useSiteContent();
   const [as, setAs] = useState<"individual" | "organisation">("individual");
   const [helpWith, setHelpWith] = useState<string[]>([]);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
 
   const toggleHelp = (option: string) => {
     setHelpWith((prev) =>
@@ -34,7 +37,8 @@ export function VolunteerCompanionForm() {
     try {
       await submitFormToSupabase("volunteer_companion", formData);
       setStatus("sent");
-    } catch {
+    } catch (err) {
+      setErrorDetail(err instanceof FormSubmitError ? err.message : null);
       setStatus("error");
     }
   }
@@ -119,6 +123,7 @@ export function VolunteerCompanionForm() {
         </label>
       </div>
 
+      <FormGuard />
       <button
         type="submit"
         disabled={status === "sending"}
@@ -132,7 +137,7 @@ export function VolunteerCompanionForm() {
       </button>
       {status === "error" && (
         <p className="mt-4 text-sm leading-relaxed text-destructive">
-          Something went wrong. Please email us directly at{" "}
+          {errorDetail ?? "Something went wrong."} Please email us directly at{" "}
           <a
             href={`mailto:${SITE.email}?subject=${encodeURIComponent("Volunteer / Companion enquiry")}`}
             className="slash"

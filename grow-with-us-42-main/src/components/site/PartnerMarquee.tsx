@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { PARTNERS } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
 import { cn } from "@/lib/utils";
 
 /**
@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
  * grows while the rest of the row keeps moving behind it. Click opens their site.
  */
 export function PartnerMarquee({ tone = "light" }: { tone?: "light" | "dark" | "black" }) {
+  const { PARTNERS } = useSiteContent();
   const trackRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
   const frame = useRef<number | null>(null);

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Reveal } from "@/components/site/Reveal";
 import { PageHero } from "@/components/site/PageHero";
-import { WHO_WE_SERVE_GROUPS } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
 import { galleryPhoto } from "@/lib/gallery-photos";
 
 export const Route = createFileRoute("/who-we-serve")({
@@ -27,6 +27,7 @@ export const Route = createFileRoute("/who-we-serve")({
 });
 
 function WhoWeServe() {
+  const { WHO_WE_SERVE_GROUPS } = useSiteContent();
   return (
     <>
       <PageHero

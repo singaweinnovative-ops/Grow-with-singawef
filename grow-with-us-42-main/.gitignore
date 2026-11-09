@@ -35,3 +35,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Raw source media: too large for git (GitHub rejects files over 100 MB) and
+# never shipped to the website. Upload finished media to Supabase Storage
+# with scripts/upload-media.ts instead.
+src/assets/**/*.zip
+src/assets/Innitiatives/In their words*/

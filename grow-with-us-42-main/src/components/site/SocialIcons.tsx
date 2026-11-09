@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
-import { SOCIAL } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
+import type { SiteContent } from "@/lib/site-content";
 
 type IconProps = { className?: string };
 
@@ -85,7 +86,7 @@ function TikTokIcon({ className }: IconProps) {
   );
 }
 
-const LINKS: { key: keyof typeof SOCIAL; label: string; Icon: (p: IconProps) => ReactElement }[] = [
+const LINKS: { key: keyof SiteContent["SOCIAL"]; label: string; Icon: (p: IconProps) => ReactElement }[] = [
   { key: "instagram", label: "Instagram", Icon: InstagramIcon },
   { key: "facebook", label: "Facebook", Icon: FacebookIcon },
   { key: "linkedin", label: "LinkedIn", Icon: LinkedInIcon },
@@ -94,6 +95,7 @@ const LINKS: { key: keyof typeof SOCIAL; label: string; Icon: (p: IconProps) => 
 ];
 
 export function SocialLinks({ className }: { className?: string }) {
+  const { SOCIAL } = useSiteContent();
   return (
     <div className={className}>
       <ul className="flex items-center gap-3">

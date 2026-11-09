@@ -1,9 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import logoDark from "@/assets/logo-dark-trim.png";
-import { SITE } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
+import { openConsentSettings } from "@/lib/consent";
 import { FORMSPREE_ENDPOINT } from "@/lib/env";
-import { submitFormToSupabase } from "@/lib/forms-client";
+import { FormSubmitError, submitFormToSupabase } from "@/lib/forms-client";
+import { FormGuard } from "@/components/site/FormGuard";
 import { SocialLinks } from "@/components/site/SocialIcons";
 import { ReportConcernForm } from "@/components/site/ReportConcernForm";
 import {
@@ -15,10 +17,12 @@ import {
 } from "@/components/ui/sheet";
 
 export function Footer() {
+  const { SITE } = useSiteContent();
   const [email, setEmail] = useState("");
   const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "sending" | "sent" | "error">(
     "idle",
   );
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
 
   async function handleSubscribe(e: FormEvent<HTMLFormElement>) {
@@ -38,7 +42,8 @@ export function Footer() {
         }).catch(() => {});
       }
       setSubscribeStatus("sent");
-    } catch {
+    } catch (err) {
+      setErrorDetail(err instanceof FormSubmitError ? err.message : null);
       setSubscribeStatus("error");
     }
   }
@@ -144,7 +149,10 @@ export function Footer() {
             <p className="mt-6 text-sm leading-relaxed text-cream/65">
               One email a month — new opportunities, programme updates and stories from the walk.
             </p>
-            <form className="mt-5 flex flex-col gap-2 sm:flex-row" onSubmit={handleSubscribe}>
+            <form
+              className="mt-5 flex flex-col gap-2 sm:flex-row sm:flex-wrap"
+              onSubmit={handleSubscribe}
+            >
               <input type="hidden" name="_subject" value="New newsletter signup" />
               <input type="hidden" name="source" value="Footer newsletter" />
               <label className="sr-only" htmlFor="footer-newsletter-email">
@@ -160,6 +168,7 @@ export function Footer() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="min-w-0 flex-1 rounded-sm border border-cream/20 bg-cream/[0.06] px-4 py-2.5 text-sm text-cream placeholder:text-cream/40 outline-none transition-colors focus:border-gold"
               />
+              <FormGuard className="w-full sm:order-last sm:basis-full" />
               <button
                 type="submit"
                 disabled={subscribeStatus === "sending"}
@@ -175,7 +184,7 @@ export function Footer() {
             )}
             {subscribeStatus === "error" && (
               <p className="mt-3 text-xs leading-relaxed text-cream/55">
-                Something went wrong. Please write to{" "}
+                {errorDetail ?? "Something went wrong."} Please write to{" "}
                 <a
                   href={`mailto:${SITE.email}?subject=${encodeURIComponent("Newsletter signup")}`}
                   className="underline hover:text-gold"
@@ -191,7 +200,14 @@ export function Footer() {
         <div className="mt-16 flex flex-col gap-4 border-t border-cream/12 pt-8 text-xs text-cream/50 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
             <p>
-              © {new Date().getFullYear()} {SITE.legal}. All rights reserved.
+              © {new Date().getFullYear()} {SITE.legal}. All rights reserved.{" "}
+              <button
+                type="button"
+                onClick={openConsentSettings}
+                className="underline underline-offset-2 transition-colors hover:text-gold"
+              >
+                Cookie settings
+              </button>
             </p>
             <p className="text-cream/40">
               {SITE.legal} · CIPC Registration No.: {SITE.registration.cipcNumber} · Income Tax

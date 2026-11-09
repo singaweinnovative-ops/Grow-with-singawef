@@ -1,12 +1,14 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Reveal } from "@/components/site/Reveal";
 import { GalleryFilm } from "@/components/site/GalleryFilm";
-import { GALLERY_EVENTS, getGalleryEvent } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
+import { loadSiteContent } from "@/lib/site-content-db";
+import { withDerived } from "@/lib/site-content";
 import { galleryPhoto, TACA_FILM_VIDEO } from "@/lib/gallery-photos";
 
 export const Route = createFileRoute("/gallery/$eventId")({
-  loader: ({ params }) => {
-    const event = getGalleryEvent(params.eventId);
+  loader: async ({ params }) => {
+    const event = withDerived(await loadSiteContent()).getGalleryEvent(params.eventId);
     if (!event) throw notFound();
     return { event };
   },
@@ -50,6 +52,7 @@ function EventMissing() {
 }
 
 function EventDetail() {
+  const { GALLERY_EVENTS } = useSiteContent();
   const { event } = Route.useLoaderData();
   const others = GALLERY_EVENTS.filter((e) => e.id !== event.id).slice(0, 3);
   const slides = event.photos.map((p) => ({ src: galleryPhoto(p.src), caption: p.caption }));
@@ -79,7 +82,7 @@ function EventDetail() {
         </div>
       </section>
 
-      {slides.length > 0 || event.hasVideo ? (
+      {slides.length > 0 || event.hasVideo || event.videoUrl ? (
         <section className="mx-auto max-w-5xl px-6 py-16 lg:px-10 lg:py-20">
           <Reveal>
             <p className="eyebrow text-clay">Highlights</p>
@@ -89,7 +92,11 @@ function EventDetail() {
             <GalleryFilm
               slides={slides}
               label={`${event.title} · highlights`}
-              {...(event.hasVideo ? { videoSrc: TACA_FILM_VIDEO } : {})}
+              {...(event.videoUrl
+                ? { videoSrc: event.videoUrl }
+                : event.hasVideo
+                  ? { videoSrc: TACA_FILM_VIDEO }
+                  : {})}
             />
           </Reveal>
         </section>

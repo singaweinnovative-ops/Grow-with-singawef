@@ -2,7 +2,10 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Reveal } from "@/components/site/Reveal";
 import { VideoFrame } from "@/components/site/VideoFrame";
 import { PageHero } from "@/components/site/PageHero";
-import { getNews, NEWS } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
+import { galleryPhoto } from "@/lib/gallery-photos";
+import { loadSiteContent } from "@/lib/site-content-db";
+import { withDerived } from "@/lib/site-content";
 import mentorship from "@/assets/mentorship.jpg";
 import steam from "@/assets/steam.jpg";
 import community from "@/assets/community.jpg";
@@ -17,15 +20,18 @@ const STORY_IMAGES: Record<string, string> = {
 };
 
 export const Route = createFileRoute("/news/$slug")({
-  loader: ({ params }) => {
-    const article = getNews(params.slug);
+  loader: async ({ params }) => {
+    const article = withDerived(await loadSiteContent()).getNews(params.slug);
     if (!article) throw notFound();
     return { article };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [{ title: "Story not found — SINGAWE Foundation" }, { name: "robots", content: "noindex" }],
+        meta: [
+          { title: "Story not found — SINGAWE Foundation" },
+          { name: "robots", content: "noindex" },
+        ],
       };
     }
     const { article } = loaderData;
@@ -48,18 +54,26 @@ const fmt = (d: string) =>
   new Date(d).toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" });
 
 function Story() {
+  const { NEWS } = useSiteContent();
   const { article } = Route.useLoaderData();
   const more = NEWS.filter((n) => n.slug !== article.slug).slice(0, 3);
 
   return (
     <>
-      <PageHero image={STORY_IMAGES[article.slug] ?? heroPortrait} alt={article.title}>
+      <PageHero
+        image={
+          article.image ? galleryPhoto(article.image) : (STORY_IMAGES[article.slug] ?? heroPortrait)
+        }
+        alt={article.title}
+      >
         <Reveal>
           <Link to="/news" className="slash text-sm text-cream/70 hover:text-gold">
             News & Media
           </Link>
           <p className="eyebrow mt-8 text-gold">{article.label}</p>
-          <h1 className="mt-4 max-w-3xl text-[clamp(2.1rem,4.6vw,3.4rem)] leading-[1.05]">{article.title}</h1>
+          <h1 className="mt-4 max-w-3xl text-[clamp(2.1rem,4.6vw,3.4rem)] leading-[1.05]">
+            {article.title}
+          </h1>
           <p className="mt-5 text-sm text-cream/70">{fmt(article.date)}</p>
           <div className="mt-8 h-px w-40 rule-draw bg-gold" />
         </Reveal>

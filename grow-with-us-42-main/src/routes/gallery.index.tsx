@@ -10,7 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GALLERY_EVENTS, GALLERY_EVENT_YEARS, GALLERY_THEMES, MONTH_NAMES } from "@/lib/site-content";
+import { MONTH_NAMES } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
 import { galleryPhoto } from "@/lib/gallery-photos";
 import { getInitiativeLogo } from "@/lib/initiative-logos";
 import hero from "@/assets/hero-portrait.jpg";
@@ -38,6 +39,9 @@ export const Route = createFileRoute("/gallery/")({
 });
 
 function Gallery() {
+  const { ALL_PROGRAMMES, GALLERY_EVENTS, GALLERY_EVENT_YEARS, GALLERY_THEMES } = useSiteContent();
+  const programmeLogo = (slug: string) =>
+    getInitiativeLogo(slug, ALL_PROGRAMMES.find((p) => p.slug === slug)?.logo);
   const themes = ["All", ...GALLERY_THEMES];
   const [theme, setTheme] = useState("All");
   const [year, setYear] = useState("All");
@@ -141,9 +145,9 @@ function Gallery() {
                   ) : (
                     <div aria-hidden="true" className="h-64 w-full bg-sand" />
                   )}
-                  {e.programmeSlug && getInitiativeLogo(e.programmeSlug) ? (
+                  {e.programmeSlug && programmeLogo(e.programmeSlug) ? (
                     <img
-                      src={getInitiativeLogo(e.programmeSlug)}
+                      src={programmeLogo(e.programmeSlug)}
                       alt=""
                       className="absolute right-3 top-3 size-11 rounded-sm border border-cream/40 bg-white object-contain p-1 shadow"
                     />

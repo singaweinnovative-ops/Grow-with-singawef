@@ -1,3 +1,6 @@
+import type { ProgrammeDossier } from "@/lib/programme-teams";
+import type { ProgrammeBrand } from "@/lib/programme-brands";
+
 export const SITE = {
   name: "SINGAWE Foundation",
   legal: "SINGAWE Foundation NPC",
@@ -156,7 +159,36 @@ export const WHO_WE_SERVE_GROUPS = [
   },
 ];
 
-export const PROGRAMMES = [
+/**
+ * Framework programmes and named initiatives share one shape so the
+ * management site can edit both from the `site_programmes` table
+ * (`family` = "Programme" | "Initiative").
+ * `image` is a bundled photo key (see @/lib/gallery-photos) or a full URL
+ * from the Supabase `site-content` bucket.
+ */
+export type ProgrammeItem = {
+  id: string;
+  label?: string;
+  name: string;
+  kicker: string;
+  body: string;
+  points: string[];
+  image?: string;
+  /** Logo shown in the programme nav and cards (URL or bundled key). */
+  logo?: string;
+  /** Edits to the programme page's vision, mission, team, stats, partners and steps. */
+  dossier?: Partial<ProgrammeDossier>;
+  /** Edits to the programme's colours, tagline, join button and join-form options. */
+  brand?: Partial<EditableBrand>;
+};
+
+/** The parts of a programme's look the management site may change. */
+export type EditableBrand = Pick<
+  ProgrammeBrand,
+  "accent" | "tint" | "onAccent" | "short" | "tagline" | "cta" | "joinField"
+>;
+
+export const PROGRAMMES: ProgrammeItem[] = [
   {
     id: "pathfinder",
     label: "01",
@@ -300,7 +332,7 @@ export const FAQS = [
 /**
  * Named initiatives — the specific, running projects of the Foundation.
  */
-export const INITIATIVES = [
+export const INITIATIVES: ProgrammeItem[] = [
   {
     id: "singaweb",
     name: "SINGAWEB",
@@ -642,8 +674,8 @@ export const OPPORTUNITIES = [
     title: "NSFAS Bursary",
     org: "National Student Financial Aid Scheme",
     category: "Funding",
-    opens: "2026-09-01",
-    closes: "2027-01-31",
+    opens: "2026-09-15",
+    closes: "2026-10-31",
     body: "Full funding for tuition, accommodation and allowances for qualifying students at public universities and TVET colleges.",
     url: "https://www.nsfas.org.za",
   },
@@ -733,7 +765,18 @@ export const OPPORTUNITY_HELP_FORMS: Record<
   },
 };
 
-export const NEWS = [
+export type NewsItem = {
+  slug: string;
+  date: string;
+  label: string;
+  title: string;
+  excerpt: string;
+  body: string[];
+  /** Optional cover image: a bundled photo key or a full URL. */
+  image?: string;
+};
+
+export const NEWS: NewsItem[] = [
   {
     slug: "phuthini-2024",
     date: "2024-03-18",
@@ -818,6 +861,8 @@ export type GalleryEvent = {
   photos: GalleryPhoto[];
   /** true when this event has a real video (see TACA_FILM_VIDEO in @/lib/gallery-photos) */
   hasVideo?: boolean;
+  /** A hosted video (e.g. a Supabase `site-content` URL) — takes priority over hasVideo. */
+  videoUrl?: string;
   /** Links this event to a programme/initiative detail page's Gallery section. */
   programmeSlug?: string;
 };
@@ -965,7 +1010,7 @@ export const GALLERY_EVENTS: GalleryEvent[] = [
   },
 ];
 
-export const GALLERY_THEMES = [
+export const GALLERY_THEMES: string[] = [
   "Journeyers",
   "Walk-Along",
   "MENTORED",
@@ -976,12 +1021,6 @@ export const GALLERY_THEMES = [
   "Torchbearers",
   "COMHACK",
 ];
-
-export const GALLERY_EVENT_YEARS = Array.from(new Set(GALLERY_EVENTS.map((e) => e.year))).sort();
-
-export function getGalleryEvent(id: string) {
-  return GALLERY_EVENTS.find((e) => e.id === id);
-}
 
 export type PersonCircle =
   | "Journeyer"
@@ -1328,10 +1367,11 @@ export const FORMS: Record<
 };
 
 /**
- * Press releases and downloadable media. Drop files into /public/press/ and
- * point `file` at them (e.g. "/press/sf-2026-charter.pdf").
+ * Press releases and downloadable media. Managed from the `site_press` table
+ * on the management site; `file` is a public URL (usually the Supabase
+ * `site-content` bucket). These entries are the built-in fallback.
  */
-export const PRESS: {
+export type PressItem = {
   id: string;
   date: string;
   kind: "Press release" | "Statement" | "Media kit" | "Report";
@@ -1339,7 +1379,9 @@ export const PRESS: {
   summary: string;
   file: string | null;
   fileLabel?: string;
-}[] = [
+};
+
+export const PRESS: PressItem[] = [
   {
     id: "charter-release",
     date: "2026-08-07",
@@ -1390,13 +1432,15 @@ export const MEDIA_CONTACT = {
 };
 
 /**
- * Downloadable / viewable documents for the Resources library. Files live in
- * /public/resources — add a PDF there and an entry here to publish it.
+ * Downloadable / viewable documents for the Resources library. Managed from
+ * the `site_resources` table; `file` is a public URL or a /resources path.
+ * These entries are the built-in fallback.
  */
 export type Resource = {
   id: string;
   title: string;
-  category: "Guides" | "Policies";
+  /** Free text, e.g. "Guides", "Policies", "Reports" — the filter chips follow whatever is used. */
+  category: string;
   description: string;
   file: string;
 };
@@ -1448,36 +1492,196 @@ export type ProgrammeDetail = {
   kicker: string;
   body: string;
   points: string[];
+  image?: string;
+  logo?: string;
+  dossier?: Partial<ProgrammeDossier>;
+  brand?: Partial<EditableBrand>;
   family: "Programme" | "Initiative";
 };
 
-export const ALL_PROGRAMMES: ProgrammeDetail[] = [
-  ...PROGRAMMES.map((p) => ({
+export function buildAllProgrammes(
+  programmes: ProgrammeItem[],
+  initiatives: ProgrammeItem[],
+): ProgrammeDetail[] {
+  const toDetail = (p: ProgrammeItem, family: ProgrammeDetail["family"]): ProgrammeDetail => ({
     slug: p.id,
     name: p.name,
     kicker: p.kicker,
     body: p.body,
     points: p.points,
-    family: "Programme" as const,
-  })),
-  ...INITIATIVES.map((i) => ({
-    slug: i.id,
-    name: i.name,
-    kicker: i.kicker,
-    body: i.body,
-    points: i.points,
-    family: "Initiative" as const,
-  })),
+    ...(p.image ? { image: p.image } : {}),
+    ...(p.logo ? { logo: p.logo } : {}),
+    ...(p.dossier ? { dossier: p.dossier } : {}),
+    ...(p.brand ? { brand: p.brand } : {}),
+    family,
+  });
+  return [
+    ...programmes.map((p) => toDetail(p, "Programme")),
+    ...initiatives.map((i) => toDetail(i, "Initiative")),
+  ];
+}
+
+/** Safeguarding commitments on /safety (site_blocks key "safety_commitments"). */
+export const SAFETY_COMMITMENTS = [
+  {
+    title: "Screening, every time",
+    body: "Every Guide and representative is screened and briefed before they are matched with a Journeyer. No exceptions, regardless of how they were referred to us.",
+  },
+  {
+    title: "Structured, recorded contact",
+    body: "Mentorship happens through accountable, recorded channels on a fixed schedule — never through unstructured, unsupervised private contact.",
+  },
+  {
+    title: "No cost, ever",
+    body: "Journeyers are never asked to pay for access to mentorship, guidance or opportunity support. Anyone asking a Journeyer for money is not acting for the Foundation.",
+  },
+  {
+    title: "Confidential reporting",
+    body: "Concerns can be raised at any time, by anyone, in confidence — a Journeyer, a parent, a Guide or a member of the public — without fear of it affecting a Journeyer's place in a programme.",
+  },
+  {
+    title: "Charter-bound",
+    body: "All Guides and representatives are bound by the Foundation Charter and our safeguarding policy, overseen by our governance Stewards.",
+  },
 ];
 
-export function getProgramme(slug: string) {
-  return ALL_PROGRAMMES.find((p) => p.slug === slug);
+/** Privacy policy sections on /privacy (site_blocks key "privacy_sections"). */
+export const PRIVACY_SECTIONS = [
+  {
+    title: "What we collect",
+    body: "Names, contact details, school or institution, and the information you choose to share in an interest, application-help or contact form. We never ask for banking details or payment information from a Journeyer.",
+  },
+  {
+    title: "Why we collect it",
+    body: "To match a Journeyer with a Guide, respond to a request for help applying, run our programmes safely, and keep in touch through updates such as our newsletter — never to sell or trade your information.",
+  },
+  {
+    title: "Who sees it",
+    body: "Only Foundation staff, screened Guides and representatives directly involved in your programme. Partner organisations only receive what is necessary to process an application you have asked help with, and only with your knowledge.",
+  },
+  {
+    title: "How long we keep it",
+    body: "For as long as it is needed for the purpose it was collected, or as required by law and our safeguarding framework — after which it is securely deleted.",
+  },
+  {
+    title: "Your rights",
+    body: "Under the Protection of Personal Information Act, 2013 (POPIA), you may ask what we hold about you, request a correction, withdraw consent, or ask us to delete it, at any time and at no cost.",
+  },
+  {
+    title: "Newsletter and forms",
+    body: "If you subscribe to updates or submit a form, we use your email only to contact you about that request or our work — you can unsubscribe at any time via the link in any email, or by writing to us.",
+  },
+  {
+    title: "Cookies and analytics",
+    body: "Essential storage remembers your cookie choice. Only if you click “Accept cookies” do we load Google Analytics, which uses cookies to tell us which pages are visited, in aggregate, so we can improve the site. You can change your mind at any time with “Cookie settings” at the foot of every page. Our forms are protected from spam by Cloudflare Turnstile, which checks your browser without tracking you across sites.",
+  },
+];
+
+/**
+ * Site-wide media that the management site can swap without a code change
+ * (stored in the `site_blocks` row with key "media"). Null means "use the
+ * file bundled with the site".
+ */
+export const MEDIA: { introVideoUrl: string | null; introPosterUrl: string | null } = {
+  introVideoUrl: null,
+  introPosterUrl: null,
+};
+
+/**
+ * Everything the public site renders as editable content. These bundled
+ * values are the fallback; at runtime @/lib/site-content-db replaces each
+ * part with what the management site has published in Supabase.
+ * Read it in components with `useSiteContent()` (@/lib/site-content-context).
+ */
+export const DEFAULT_SITE_CONTENT = {
+  SITE,
+  SOCIAL,
+  LEXICON,
+  PRINCIPLES,
+  VALUES,
+  OUR_WORK_PILLARS,
+  WHO_WE_SERVE_GROUPS,
+  PROGRAMMES,
+  INITIATIVES,
+  JOURNEY_STEPS,
+  STEWARDS,
+  GUIDES,
+  FAQS,
+  LEARNING_PATHWAYS,
+  PROCESS_STEPS,
+  WALK_STAGES,
+  FOOTPRINT,
+  MOVEMENTS,
+  COLLAB_CREED,
+  PARTNERS,
+  SINGAWEB_SCHOOLS,
+  CAREER_YUM,
+  TACA_MATRIC_SYSTEM,
+  OPPORTUNITY_HELP_FORMS,
+  NEWS,
+  GALLERY_EVENTS,
+  GALLERY_THEMES,
+  FORMS,
+  PRESS,
+  MEDIA_CONTACT,
+  RESOURCES,
+  MEDIA,
+  SAFETY_COMMITMENTS,
+  PRIVACY_SECTIONS,
+};
+
+export type SiteContent = typeof DEFAULT_SITE_CONTENT;
+
+/**
+ * The `site_blocks.key` for each piece of page text, e.g. "site", "faqs",
+ * "walk_stages". Collections with their own tables are not listed here.
+ */
+export const BLOCK_KEYS = {
+  SITE: "site",
+  SOCIAL: "social",
+  LEXICON: "lexicon",
+  PRINCIPLES: "principles",
+  VALUES: "values",
+  OUR_WORK_PILLARS: "our_work_pillars",
+  WHO_WE_SERVE_GROUPS: "who_we_serve_groups",
+  JOURNEY_STEPS: "journey_steps",
+  STEWARDS: "stewards",
+  GUIDES: "guides",
+  FAQS: "faqs",
+  LEARNING_PATHWAYS: "learning_pathways",
+  PROCESS_STEPS: "process_steps",
+  WALK_STAGES: "walk_stages",
+  FOOTPRINT: "footprint",
+  MOVEMENTS: "movements",
+  COLLAB_CREED: "collab_creed",
+  PARTNERS: "partners",
+  SINGAWEB_SCHOOLS: "singaweb_schools",
+  CAREER_YUM: "career_yum",
+  TACA_MATRIC_SYSTEM: "taca_matric_system",
+  OPPORTUNITY_HELP_FORMS: "opportunity_help_forms",
+  GALLERY_THEMES: "gallery_themes",
+  FORMS: "forms",
+  MEDIA_CONTACT: "media_contact",
+  MEDIA: "media",
+  SAFETY_COMMITMENTS: "safety_commitments",
+  PRIVACY_SECTIONS: "privacy_sections",
+} as const satisfies Partial<Record<keyof SiteContent, string>>;
+
+/** Content plus the lookups and lists derived from it. */
+export function withDerived(content: SiteContent) {
+  const ALL_PROGRAMMES = buildAllProgrammes(content.PROGRAMMES, content.INITIATIVES);
+  return {
+    ...content,
+    ALL_PROGRAMMES,
+    GALLERY_EVENT_YEARS: Array.from(new Set(content.GALLERY_EVENTS.map((e) => e.year))).sort(),
+    getProgramme: (slug: string) => ALL_PROGRAMMES.find((p) => p.slug === slug),
+    getNews: (slug: string) => content.NEWS.find((n) => n.slug === slug),
+    getGalleryEvent: (id: string) => content.GALLERY_EVENTS.find((e) => e.id === id),
+  };
 }
+
+export type SiteContentWithDerived = ReturnType<typeof withDerived>;
 
 export function getPerson(slug: string) {
   return PEOPLE.find((p) => p.slug === slug);
-}
-
-export function getNews(slug: string) {
-  return NEWS.find((n) => n.slug === slug);
 }

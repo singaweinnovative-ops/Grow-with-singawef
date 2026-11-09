@@ -134,12 +134,42 @@ const EXTRA_SECTIONS = [
   { id: "allies", label: "Partners" },
 ];
 
+const EDITABLE_KEYS = [
+  "accent",
+  "tint",
+  "onAccent",
+  "short",
+  "tagline",
+  "cta",
+  "joinField",
+] as const;
+const HEX = /^#[0-9a-f]{3,8}$/i;
+
+/**
+ * `override` is site_programmes.brand from the management site. Only the
+ * look-and-copy fields are editable; page sections stay as built. Colours
+ * must be hex values (#1F6F6B) so a typo can't break the page.
+ */
 export function getBrand(
   slug: string,
   name?: string,
   family?: "Programme" | "Initiative",
+  override?: Partial<Pick<ProgrammeBrand, (typeof EDITABLE_KEYS)[number]>>,
 ): ProgrammeBrand {
-  const base = PROGRAMME_BRANDS[slug] ?? { ...DEFAULT_BRAND, short: name ?? DEFAULT_BRAND.short };
+  const built = PROGRAMME_BRANDS[slug] ?? { ...DEFAULT_BRAND, short: name ?? DEFAULT_BRAND.short };
+  const base: ProgrammeBrand = { ...built };
+  for (const key of EDITABLE_KEYS) {
+    const value = override?.[key];
+    if (value === undefined || value === null || value === "") continue;
+    if ((key === "accent" || key === "tint" || key === "onAccent") && !HEX.test(String(value)))
+      continue;
+    if (key === "cta" || key === "joinField") {
+      if (typeof value === "object")
+        (base as Record<string, unknown>)[key] = { ...base[key], ...value };
+      continue;
+    }
+    (base as Record<string, unknown>)[key] = value;
+  }
   const sections = [...base.sections];
   const extra =
     family === "Initiative"

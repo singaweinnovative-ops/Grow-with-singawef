@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { ArrowRight } from "lucide-react";
 import logoLight from "@/assets/logo-light-trim.png";
 import { cn } from "@/lib/utils";
@@ -37,6 +37,115 @@ const GROUPS: Group[] = [
   },
 ];
 
+/**
+ * One desktop dropdown. Opens on hover, click, Enter, Space or ArrowDown;
+ * arrow keys move between links; Escape closes and returns focus to the
+ * button; tabbing out of the group closes it.
+ */
+function NavGroup({ group }: { group: Group }) {
+  const [open, setOpen] = useState(false);
+  const menuId = useId();
+  const wrapper = useRef<HTMLDivElement>(null);
+  const button = useRef<HTMLButtonElement>(null);
+
+  const links = () => Array.from(wrapper.current?.querySelectorAll<HTMLAnchorElement>("a") ?? []);
+  const focusLink = (index: number) => {
+    const items = links();
+    if (items.length === 0) return;
+    items[(index + items.length) % items.length]?.focus();
+  };
+
+  function onButtonKeyDown(e: KeyboardEvent<HTMLButtonElement>) {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      setOpen(true);
+      requestAnimationFrame(() => focusLink(e.key === "ArrowDown" ? 0 : -1));
+    }
+  }
+
+  function onMenuKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    const items = links();
+    const current = items.indexOf(document.activeElement as HTMLAnchorElement);
+    if (e.key === "Escape") {
+      e.preventDefault();
+      setOpen(false);
+      button.current?.focus();
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      focusLink(current + 1);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      focusLink(current - 1);
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      focusLink(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      focusLink(-1);
+    }
+  }
+
+  return (
+    <div
+      ref={wrapper}
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      onBlur={(e) => {
+        if (!wrapper.current?.contains(e.relatedTarget as Node | null)) setOpen(false);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape" && open) {
+          setOpen(false);
+          button.current?.focus();
+        }
+      }}
+    >
+      <button
+        ref={button}
+        type="button"
+        aria-expanded={open}
+        aria-controls={menuId}
+        // Keyboard (Enter/Space, detail 0) toggles; a mouse click keeps a
+        // hover-opened menu open instead of closing it.
+        onClick={(e) => setOpen((v) => (e.detail === 0 ? !v : true))}
+        onKeyDown={onButtonKeyDown}
+        className={cn(
+          "flex items-center gap-1.5 rounded-sm px-3 py-2 text-[0.78rem] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold",
+          open ? "text-foreground" : "text-foreground/75 hover:text-foreground",
+        )}
+      >
+        {group.label}
+        <span aria-hidden="true" className="text-[0.6rem] text-gold">
+          ▾
+        </span>
+      </button>
+      <div
+        id={menuId}
+        onKeyDown={onMenuKeyDown}
+        // Closed menus are hidden from keyboard and screen readers, not just faded out.
+        inert={!open}
+        className={cn(
+          "absolute left-0 top-full w-52 rounded-sm border border-border bg-background p-1.5 shadow-[0_20px_50px_-30px_oklch(0.19_0.014_60/0.6)] transition-all duration-200",
+          open ? "visible translate-y-0 opacity-100" : "invisible translate-y-1 opacity-0",
+        )}
+      >
+        {group.items.map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
+            onClick={() => setOpen(false)}
+            className="block rounded-sm px-3 py-2 text-[0.8rem] text-foreground/75 transition-colors hover:bg-sand hover:text-clay focus-visible:bg-sand focus-visible:text-clay focus-visible:outline-none"
+            activeProps={{ className: "text-clay", "aria-current": "page" }}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -69,29 +178,12 @@ export function Header() {
           <span className="sr-only">SINGAWE Foundation — Your Journey. Our Commitment.</span>
         </Link>
 
-        <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-2 lg:flex">
+        <nav
+          aria-label="Main"
+          className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-2 lg:flex"
+        >
           {GROUPS.map((g) => (
-            <div key={g.label} className="group relative">
-              <button
-                type="button"
-                className="flex items-center gap-1.5 rounded-sm px-3 py-2 text-[0.78rem] font-medium text-foreground/75 transition-colors group-hover:text-foreground"
-              >
-                {g.label}
-                <span className="text-[0.6rem] text-gold">▾</span>
-              </button>
-              <div className="invisible absolute left-0 top-full w-52 translate-y-1 rounded-sm border border-border bg-background p-1.5 opacity-0 shadow-[0_20px_50px_-30px_oklch(0.19_0.014_60/0.6)] transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-                {g.items.map((item) => (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    className="block rounded-sm px-3 py-2 text-[0.8rem] text-foreground/75 transition-colors hover:bg-sand hover:text-clay"
-                    activeProps={{ className: "text-clay" }}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
+            <NavGroup key={g.label} group={g} />
           ))}
         </nav>
 
@@ -109,8 +201,9 @@ export function Header() {
 
         <button
           type="button"
-          aria-label="Toggle menu"
+          aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
+          aria-controls="mobile-menu"
           onClick={() => setOpen((v) => !v)}
           className="flex size-10 flex-col items-center justify-center gap-1.5 lg:hidden"
         >
@@ -130,12 +223,14 @@ export function Header() {
       </div>
 
       <div
+        id="mobile-menu"
+        inert={!open}
         className={cn(
           "overflow-hidden border-t border-border bg-background transition-[max-height] duration-500 lg:hidden",
           open ? "max-h-[46rem]" : "max-h-0 border-transparent",
         )}
       >
-        <nav className="flex flex-col px-6 py-4">
+        <nav aria-label="Mobile" className="flex flex-col px-6 py-4">
           {GROUPS.map((g) => (
             <div key={g.label} className="py-2">
               <p className="eyebrow text-gold">{g.label}</p>

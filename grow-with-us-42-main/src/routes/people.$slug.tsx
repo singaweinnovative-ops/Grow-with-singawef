@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Reveal } from "@/components/site/Reveal";
 import { PageHero } from "@/components/site/PageHero";
-import { SITE } from "@/lib/site-content";
+import { useSiteContent } from "@/lib/site-content-context";
 import { personPhoto } from "@/lib/people-photos";
 import { PersonAvatar } from "@/components/site/PersonAvatar";
 import teamFallback from "@/assets/team-meeting-2.jpg";
@@ -59,6 +59,7 @@ function PersonMissing() {
 }
 
 function PersonDetailPage() {
+  const { SITE } = useSiteContent();
   const { person, people } = Route.useLoaderData();
   const others = people.filter((p) => p.slug !== person.slug).slice(0, 4);
 

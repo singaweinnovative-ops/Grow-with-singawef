@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from "react";
 import type { ProgrammeBrand } from "@/lib/programme-brands";
-import { SITE } from "@/lib/site-content";
-import { submitFormToSupabase } from "@/lib/forms-client";
+import { useSiteContent } from "@/lib/site-content-context";
+import { FormSubmitError, submitFormToSupabase } from "@/lib/forms-client";
+import { FormGuard } from "@/components/site/FormGuard";
 
 const inputClass =
   "rounded-sm border border-black/15 bg-white/70 px-4 py-3 text-sm outline-none transition-colors focus:border-current";
@@ -13,7 +14,9 @@ export function InitiativeCollaborateForm({
   brand: ProgrammeBrand;
   programmeName: string;
 }) {
+  const { SITE } = useSiteContent();
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -24,7 +27,8 @@ export function InitiativeCollaborateForm({
     try {
       await submitFormToSupabase("initiative_collaborate", formData);
       setStatus("sent");
-    } catch {
+    } catch (err) {
+      setErrorDetail(err instanceof FormSubmitError ? err.message : null);
       setStatus("error");
     }
   }
@@ -127,6 +131,7 @@ export function InitiativeCollaborateForm({
         />
       </label>
 
+      <FormGuard />
       <button
         type="submit"
         disabled={status === "sending"}
@@ -137,7 +142,7 @@ export function InitiativeCollaborateForm({
       </button>
       {status === "error" && (
         <p className="text-sm" style={{ color: brand.accent }}>
-          Something went wrong. Please email us directly at{" "}
+          {errorDetail ?? "Something went wrong."} Please email us directly at{" "}
           <a
             href={`mailto:${SITE.email}?subject=${encodeURIComponent(`Collaboration: ${programmeName}`)}`}
             className="underline"
